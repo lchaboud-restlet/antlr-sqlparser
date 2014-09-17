@@ -3,9 +3,6 @@ package com.restlet.sqlimport.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -25,6 +22,11 @@ import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 
 public class SqlImport {
 
+	/**
+	 * Read input stream.
+	 * @param is input stream
+	 * @return Database schema
+	 */
 	public Database read(final InputStream is) {
 		if(is == null) {
 			return null;
@@ -40,7 +42,11 @@ public class SqlImport {
 		return read(in);
 	}
 
-
+	/**
+	 * Read SQL statements from string value
+	 * @param txt SQL statements as string value
+	 * @return Database schema
+	 */
 	public Database read(final String txt) {
 		if(txt == null) {
 			return null;
@@ -50,12 +56,20 @@ public class SqlImport {
 		return read(in);
 	}
 
+	/**
+	 * Parse ANTLR input stream which contains SQL statements.
+	 * @param in ANTLR input stream
+	 * @return Database schema
+	 */
 	public Database read(final ANTLRInputStream in) {
 		if(in == null) {
 			return null;
 		}
+
 		final SqlLexer l = new SqlLexer(in);
 		final SqlParser p = new SqlParser(new CommonTokenStream(l));
+
+		// Errors catching
 		p.addErrorListener(new BaseErrorListener() {
 			@Override
 			public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
@@ -63,32 +77,33 @@ public class SqlImport {
 			}
 		});
 
-		final AtomicReference<String> name = new AtomicReference<String>();
-		final Map<String, Integer> points = new HashMap<String, Integer>();
-		final String[][] grid = new String[5][5];
-
+		// Database schema
 		final Database database = new Database();
 
+		// Fill database schema from SQL input stream read by ANTLR
 		p.addParseListener(new SqlBaseListener() {
+
 			Table table;
 			Column column;
+
 			boolean inCreateTable = false;
 			boolean inColumnDef = false;
 			boolean inTypeName = false;
 
-			@Override
-			public void exitParse(final SqlParser.ParseContext ctx) {
-				System.out.println("exit parse : "+ctx.invokingState);
-			}
+			//--- CREATE TABLE
 
-			//--- CREATE TABLE statement
-
+			/**
+			 * enter CREATE TABLE
+			 */
 			@Override
 			public void enterCreate_table_stmt(final Create_table_stmtContext ctx) {
 				inCreateTable = true;
 				table = new Table();
 			}
 
+			/**
+			 * exit CREATE TABLE
+			 */
 			@Override
 			public void exitCreate_table_stmt(final Create_table_stmtContext ctx) {
 				database.getTables().add(table);
@@ -96,6 +111,9 @@ public class SqlImport {
 				inCreateTable = false;
 			}
 
+			/**
+			 * Table name
+			 */
 			@Override
 			public void exitTable_name(final Table_nameContext ctx) {
 				if(inCreateTable) {
@@ -105,6 +123,9 @@ public class SqlImport {
 
 			//--- Column definition
 
+			/**
+			 * enter Column definition
+			 */
 			@Override
 			public void enterColumn_def(final Column_defContext ctx) {
 				inColumnDef = true;
@@ -113,6 +134,9 @@ public class SqlImport {
 				}
 			}
 
+			/**
+			 * exit Column definition
+			 */
 			@Override
 			public void exitColumn_def(final Column_defContext ctx) {
 				if(inCreateTable) {
@@ -136,16 +160,26 @@ public class SqlImport {
 
 			//--- Column type
 
+			/**
+			 * enter Column type
+			 */
 			@Override
 			public void enterType_name(final Type_nameContext ctx) {
 				inTypeName = true;
 			}
 
+			/**
+			 * exit column type
+			 */
 			@Override
 			public void exitType_name(final Type_nameContext ctx) {
 				inTypeName = false;
 			}
 
+			/**
+			 * Name. It could be : <br/>
+			 * - type name
+			 */
 			@Override
 			public void exitName(final NameContext ctx) {
 				if(inCreateTable && inColumnDef && inTypeName) {
