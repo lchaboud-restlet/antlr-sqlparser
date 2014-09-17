@@ -1,0 +1,37 @@
+
+CREATE TABLE table3
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    nom VARCHAR(100)
+);
+
+CREATE TABLE table2
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    nom VARCHAR(100),
+	id_table3 INTEGER,
+	nom_table3 VARCHAR(100)
+);
+
+CREATE TABLE table1
+(
+    id INTEGER PRIMARY KEY NOT NULL,
+    nom VARCHAR(100),
+    dt DATE,
+    num INTEGER,
+	id_table2 INTEGER REFERENCES table2(id),
+	id_table3 INTEGER,
+	FOREIGN KEY(id_table3)
+		REFERENCES table3(id) ON DELETE CASCADE
+);
+
+ALTER TABLE table3
+ADD CONSTRAINT u_table3
+UNIQUE (id, nom);
+
+ALTER TABLE table2
+ADD CONSTRAINT fk_table2_table3
+FOREIGN KEY (id_table3, nom_table3)
+REFERENCES table3(id, nom)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;

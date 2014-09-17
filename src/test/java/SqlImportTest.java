@@ -49,7 +49,7 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_with_sqlfile() throws FileNotFoundException {
+	public void testRead_import1() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/import1.sql");
 		final InputStream in = new FileInputStream(file);
@@ -70,17 +70,51 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_select() throws FileNotFoundException {
+	public void testRead_mysql() throws FileNotFoundException {
 		// Given
-		final String sql = "SELECT log AS x FROM t1 \n" +
-				"GROUP BY x                   \n" +
-				"HAVING count(*) >= 4         \n" +
-				"ORDER BY max(n) + 0          \n";
+		final File file = util.getFileByClassPath("/mysql.sql");
+		final InputStream in = new FileInputStream(file);
 
 		// When
-		final Database database = sqlImport.read(sql);
+		final Database database = sqlImport.read(in);
 
-		assertNotNull(database);
+		assertEquals(2, database.getTables().size());
+	}
+
+	@Test
+	public void testRead_postgres() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/postgres.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final Database database = sqlImport.read(in);
+
+		assertEquals(2, database.getTables().size());
+	}
+
+	@Test
+	public void testRead_oracle1() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/oracle1.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final Database database = sqlImport.read(in);
+
+		assertEquals(2, database.getTables().size());
+	}
+
+	@Test
+	public void testRead_oracle2() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/oracle2.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final Database database = sqlImport.read(in);
+
+		assertEquals(2, database.getTables().size());
 	}
 
 }
