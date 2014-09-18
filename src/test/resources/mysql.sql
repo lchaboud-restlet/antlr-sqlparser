@@ -1,3 +1,6 @@
+
+ddd;
+
 create database test;
 use test;
 

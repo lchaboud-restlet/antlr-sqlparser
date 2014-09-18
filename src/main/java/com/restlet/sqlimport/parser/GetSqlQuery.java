@@ -21,11 +21,14 @@ public class GetSqlQuery {
 		if(queryUpperCase.indexOf("CREATE TABLE") != -1) {
 			return true;
 		}
+		/**
+		 * Decomment this to support ALTER TABLE with ADD CONSTRAINT and MODIFY :
 		if(queryUpperCase.indexOf("ALTER TABLE") != -1) {
 			if((queryUpperCase.indexOf("ADD CONSTRAINT") != -1) || (queryUpperCase.indexOf("MODIFY") != -1)) {
 				return true;
 			}
 		}
+		 */
 		return false;
 	}
 

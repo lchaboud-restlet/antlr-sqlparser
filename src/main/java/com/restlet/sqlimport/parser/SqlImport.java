@@ -22,6 +22,22 @@ import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 
 public class SqlImport {
 
+	public class SqlImportErrorListener extends BaseErrorListener {
+		public String query;
+		@Override
+		public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
+			System.out.println("------------");
+			System.out.println("Error on query : \n"+query);
+			System.out.println("=> line " + line + " : " + msg);
+			if(e != null) {
+				if(e.getMessage() != null) {
+					System.out.println(e.getMessage());
+				}
+				//System.out.println(e);
+			}
+		}
+	}
+
 	public Database read(final InputStream is) {
 		if(is == null) {
 			return null;
@@ -51,38 +67,19 @@ public class SqlImport {
 	 * @param txt SQL statements as string value
 	 * @return Database schema
 	 */
-	public void readOneQuery(final Database database, final String txt) {
-		if(txt == null) {
+	public void readOneQuery(final Database database, final String query) {
+		if(query == null) {
 			return;
 		}
-		final ANTLRInputStream in = new ANTLRInputStream(txt);
-
-		read(database, in);
-	}
-
-	/**
-	 * Parse ANTLR input stream which contains SQL statements.
-	 * @param database Database schema
-	 * @param in ANTLR input stream
-	 * @return Database schema
-	 */
-	public void read(final Database database, final ANTLRInputStream in) {
-		if(in == null) {
-			return;
-		}
+		final ANTLRInputStream in = new ANTLRInputStream(query);
 
 		final SqlLexer l = new SqlLexer(in);
 		final SqlParser p = new SqlParser(new CommonTokenStream(l));
 
 		// Errors catching
-		p.addErrorListener(new BaseErrorListener() {
-			@Override
-			public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
-				// throw new IllegalStateException("failed to parse at line " + line + " due to " + msg, e);
-				System.out.println("failed to parse at line " + line + " due to " + msg);
-				System.err.println(e);
-			}
-		});
+		final SqlImportErrorListener listener = new SqlImportErrorListener();
+		listener.query = query;
+		p.addErrorListener(listener);
 
 		// Fill database schema from SQL input stream read by ANTLR
 		p.addParseListener(new SqlBaseListener() {
@@ -187,7 +184,11 @@ public class SqlImport {
 			@Override
 			public void exitName(final NameContext ctx) {
 				if(inCreateTable && inColumnDef && inTypeName) {
-					column.setType(ctx.getText());
+					if(column.getType() == null) {
+						column.setType(ctx.getText());
+					} else {
+						column.setType(column.getType() + " " + ctx.getText());
+					}
 				}
 			}
 

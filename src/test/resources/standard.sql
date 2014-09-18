@@ -17,7 +17,7 @@ CREATE TABLE table1
 (
     id INTEGER PRIMARY KEY NOT NULL,
     nom VARCHAR(100),
-    dt DATE,
+    dt DATE TIME,
     num INTEGER,
 	id_table2 INTEGER REFERENCES table2(id),
 	id_table3 INTEGER,
