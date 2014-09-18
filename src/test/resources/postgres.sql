@@ -1,5 +1,3 @@
-# --- !Ups
-
 CREATE SEQUENCE rank_id_seq;
 CREATE SEQUENCE rank_id_seq2;
 CREATE SEQUENCE id_article_keyword;
@@ -138,4 +136,3 @@ WITH (
 );
 ALTER TABLE table1
   OWNER TO postgres;
-

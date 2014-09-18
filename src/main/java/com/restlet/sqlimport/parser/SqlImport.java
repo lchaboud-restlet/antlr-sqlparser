@@ -1,8 +1,8 @@
 package com.restlet.sqlimport.parser;
 
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -22,48 +22,53 @@ import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 
 public class SqlImport {
 
-	/**
-	 * Read input stream.
-	 * @param is input stream
-	 * @return Database schema
-	 */
 	public Database read(final InputStream is) {
 		if(is == null) {
 			return null;
 		}
 
-		ANTLRInputStream in;
-		try {
-			in = new ANTLRInputStream(is);
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
+		final GetSqlQuery getSqlQuery = new GetSqlQuery();
+		final List<String> querys = getSqlQuery.getSqlQuerys(is);
+		final Database database = read(querys);
+
+		return database;
+	}
+
+	public Database read(final List<String> querys) {
+
+		final Database database = new Database();
+
+		for(final String query : querys) {
+			readOneQuery(database, query);
 		}
 
-		return read(in);
+		return database;
 	}
 
 	/**
 	 * Read SQL statements from string value
+	 * @param database Database schema
 	 * @param txt SQL statements as string value
 	 * @return Database schema
 	 */
-	public Database read(final String txt) {
+	public void readOneQuery(final Database database, final String txt) {
 		if(txt == null) {
-			return null;
+			return;
 		}
 		final ANTLRInputStream in = new ANTLRInputStream(txt);
 
-		return read(in);
+		read(database, in);
 	}
 
 	/**
 	 * Parse ANTLR input stream which contains SQL statements.
+	 * @param database Database schema
 	 * @param in ANTLR input stream
 	 * @return Database schema
 	 */
-	public Database read(final ANTLRInputStream in) {
+	public void read(final Database database, final ANTLRInputStream in) {
 		if(in == null) {
-			return null;
+			return;
 		}
 
 		final SqlLexer l = new SqlLexer(in);
@@ -73,12 +78,11 @@ public class SqlImport {
 		p.addErrorListener(new BaseErrorListener() {
 			@Override
 			public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
-				throw new IllegalStateException("failed to parse at line " + line + " due to " + msg, e);
+				// throw new IllegalStateException("failed to parse at line " + line + " due to " + msg, e);
+				System.out.println("failed to parse at line " + line + " due to " + msg);
+				System.err.println(e);
 			}
 		});
-
-		// Database schema
-		final Database database = new Database();
 
 		// Fill database schema from SQL input stream read by ANTLR
 		p.addParseListener(new SqlBaseListener() {
@@ -189,8 +193,6 @@ public class SqlImport {
 
 		});
 		p.parse();
-
-		return database;
 	}
 
 }
