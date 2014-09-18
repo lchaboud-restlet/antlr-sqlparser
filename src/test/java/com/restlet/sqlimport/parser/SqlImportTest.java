@@ -2,8 +2,10 @@ package com.restlet.sqlimport.parser;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,8 +88,9 @@ public class SqlImportTest {
 		final Table table1 = database.getTables().get(2);
 		assertEquals("table1", table1.getName());
 
+		// Table 1
 		System.out.println(table1.getColumnByNames().keySet());
-		//assertEquals(6, table1.getColumnByNames().keySet().size());
+		assertEquals(6, table1.getColumnByNames().keySet().size());
 		final Column t1_id = table1.getColumnByNames().get("id");
 		final Column t1_nom = table1.getColumnByNames().get("nom");
 		final Column t1_dt = table1.getColumnByNames().get("dt");
@@ -99,16 +102,26 @@ public class SqlImportTest {
 		assertEquals("nom", t1_nom.getName());
 		assertEquals("dt", t1_dt.getName());
 		assertEquals("num", t1_num.getName());
-		//assertEquals("id_table2", t1_id_table2.getName());
+		assertEquals("id_table2", t1_id_table2.getName());
 		assertEquals("id_table3", t1_id_table3.getName());
 		// type
 		assertEquals("INTEGER", t1_id.getType());
 		assertEquals("VARCHAR", t1_nom.getType());
 		assertEquals("DATE TIME", t1_dt.getType());
 		assertEquals("INTEGER", t1_num.getType());
-		//assertEquals("INTEGER", t1_id_table2.getType());
+		assertEquals("INTEGER", t1_id_table2.getType());
 		assertEquals("INTEGER", t1_id_table3.getType());
+		// primary key
+		assertEquals("id", table1.getPrimaryKey().getName());
+		// not null
+		assertTrue(t1_id.getIsNotNull());
+		assertFalse(t1_nom.getIsNotNull());
+		assertTrue(t1_dt.getIsNotNull());
+		assertFalse(t1_num.getIsNotNull());
+		assertFalse(t1_id_table2.getIsNotNull());
+		assertFalse(t1_id_table3.getIsNotNull());
 
+		// Table 2
 		assertEquals(4, table2.getColumnByNames().keySet().size());
 		final Column t2_id = table2.getColumnByNames().get("id");
 		final Column t2_nom = table2.getColumnByNames().get("nom");
@@ -118,12 +131,23 @@ public class SqlImportTest {
 		assertEquals("nom", t2_nom.getName());
 		assertEquals("id_table3", t2_id_table3.getName());
 		assertEquals("nom_table3", t2_nom_table3.getName());
+		// primary key
+		assertEquals("id", table2.getPrimaryKey().getName());
+		// not null
+		assertTrue(t2_id.getIsNotNull());
+		assertFalse(t2_nom.getIsNotNull());
 
+		// Table 3
 		assertEquals(2, table3.getColumnByNames().keySet().size());
 		final Column t3_id = table3.getColumnByNames().get("id");
 		final Column t3_nom = table3.getColumnByNames().get("nom");
 		assertEquals("id", t3_id.getName());
 		assertEquals("nom", t3_nom.getName());
+		// primary key
+		assertEquals("id", table3.getPrimaryKey().getName());
+		// not null
+		assertTrue(t3_id.getIsNotNull());
+		assertFalse(t3_nom.getIsNotNull());
 	}
 
 	// @Test

@@ -17,9 +17,9 @@ CREATE TABLE table1
 (
     id INTEGER PRIMARY KEY NOT NULL,
     nom VARCHAR(100),
-    dt DATE TIME,
+    dt DATE TIME NOT NULL,
     num INTEGER,
-	id_table2 INTEGER REFERENCES table2(id),
+	id_table2 INTEGER /*REFERENCES table2(id)*/,
 	id_table3 INTEGER,
 	FOREIGN KEY(id_table3)
 		REFERENCES table3(id) ON DELETE CASCADE

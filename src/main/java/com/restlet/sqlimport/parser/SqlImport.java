@@ -10,12 +10,17 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
+import com.restlet.sqlimport.model.CleEtrangere;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
+import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_defContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Create_table_stmtContext;
+import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
+import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
 import com.restlet.sqlimport.parser.SqlParser.NameContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
@@ -86,10 +91,12 @@ public class SqlImport {
 
 			Table table;
 			Column column;
+			CleEtrangere cleEtrangere;
 
 			boolean inCreateTable = false;
 			boolean inColumnDef = false;
 			boolean inTypeName = false;
+			boolean inForeignKey = false;
 
 			//--- CREATE TABLE
 
@@ -190,6 +197,49 @@ public class SqlImport {
 						column.setType(column.getType() + " " + ctx.getText());
 					}
 				}
+			}
+
+			//--- Constraints
+
+			//--- Not Null
+
+			@Override
+			public void exitColumn_constraint_not_null(
+					final Column_constraint_not_nullContext ctx) {
+				if(inCreateTable && inColumnDef) {
+					column.setIsNotNull(true);
+				}
+			}
+
+			//--- Primary Key
+
+			@Override
+			public void exitColumn_constraint_primary_key(
+					final Column_constraint_primary_keyContext ctx) {
+				if(inCreateTable && inColumnDef) {
+					table.setPrimaryKey(column);
+				}
+			}
+
+			//--- Foreign Key
+
+			@Override
+			public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
+				inForeignKey = true;
+				cleEtrangere = new CleEtrangere();
+			}
+
+			@Override
+			public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
+				inForeignKey = false;
+				if(inCreateTable) {
+					table.getCleEtrangeres().add(cleEtrangere);
+				}
+			}
+
+			@Override
+			public void exitForeign_table(final Foreign_tableContext ctx) {
+				cleEtrangere.setTableTarget(ctx.getText());
 			}
 
 		});
