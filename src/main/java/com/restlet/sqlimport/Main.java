@@ -4,8 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.restlet.sqlimport.export.ExportToPivotFormat;
 import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.parser.SqlExport;
 import com.restlet.sqlimport.parser.SqlImport;
 import com.restlet.sqlimport.util.Util;
 
@@ -31,7 +31,7 @@ public class Main {
 		final SqlImport sqlImport = new SqlImport();
 		final Database database = sqlImport.read(in);
 
-		final SqlExport sqlExport = new SqlExport();
+		final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
 		sqlExport.write(database, os);
 	}
 

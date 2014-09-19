@@ -1,4 +1,4 @@
-package com.restlet.sqlimport.parser;
+package com.restlet.sqlimport.export;
 
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
