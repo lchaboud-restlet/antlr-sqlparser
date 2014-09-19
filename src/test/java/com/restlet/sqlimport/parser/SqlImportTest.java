@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.restlet.sqlimport.model.CleEtrangere;
+import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.Table;
@@ -122,14 +122,12 @@ public class SqlImportTest {
 		assertFalse(t1_id_table2.getIsNotNull());
 		assertFalse(t1_id_table3.getIsNotNull());
 		//  clé étrangère
-		/*
-		final CleEtrangere cle_id_table2 = table1.getCleEtrangeres().get(0);
-		assertEquals("table1", cle_id_table2.getTableOrigin());
-		assertEquals("table2", cle_id_table2.getTableTarget());
-		assertEquals("id_table2", cle_id_table2.getColumnOrigin());
-		assertEquals("id", cle_id_table2.getColumnTarget());
-		 */
-		final CleEtrangere cle_id_table3 = table1.getCleEtrangeres().get(0);
+		final ForeignKey cle_id_table2 = table1.getForeignKeys().get(0);
+		assertEquals("table1", cle_id_table2.getTableNameOrigin());
+		assertEquals("table2", cle_id_table2.getTableNameTarget());
+		assertEquals("id_table2", cle_id_table2.getColumnNameOrigins().get(0));
+		assertEquals("id", cle_id_table2.getColumnNameTargets().get(0));
+		final ForeignKey cle_id_table3 = table1.getForeignKeys().get(1);
 		assertEquals("table1", cle_id_table3.getTableNameOrigin());
 		assertEquals("table3", cle_id_table3.getTableNameTarget());
 		assertEquals("id_table3", cle_id_table3.getColumnNameOrigins().get(0));

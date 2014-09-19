@@ -10,10 +10,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-import com.restlet.sqlimport.model.CleEtrangere;
+import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_defContext;
@@ -30,6 +31,14 @@ import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 
 public class SqlImport {
 
+	/**
+	 * Debug : display context information during ANTLR v4 parsing.
+	 */
+	public static final boolean DEBUG = false;
+
+	/**
+	 * Errors listener which display SQL query.
+	 */
 	public class SqlImportErrorListener extends BaseErrorListener {
 		public String query;
 		@Override
@@ -41,11 +50,19 @@ public class SqlImport {
 				if(e.getMessage() != null) {
 					System.out.println(e.getMessage());
 				}
-				//System.out.println(e);
+				if(e.getCtx() != null) {
+					System.out.println("Context : "+e.getCtx());
+				}
 			}
 		}
 	}
 
+	/**
+	 * Read input stream to get database schema.
+	 * 
+	 * @param is input stream
+	 * @return Database schema
+	 */
 	public Database read(final InputStream is) {
 		if(is == null) {
 			return null;
@@ -58,6 +75,11 @@ public class SqlImport {
 		return database;
 	}
 
+	/**
+	 * 
+	 * @param querys
+	 * @return
+	 */
 	public Database read(final List<String> querys) {
 
 		final Database database = new Database();
@@ -94,13 +116,21 @@ public class SqlImport {
 
 			Table table;
 			Column column;
-			CleEtrangere cleEtrangere;
+			ForeignKey foreignKey;
 
 			boolean inCreateTable = false;
 			boolean inColumnDef = false;
 			boolean inTypeName = false;
-			boolean inForeignKeyClause = false;
-			boolean inTableConstraintForeignKey = false;
+
+			/**
+			 * Used only for debug, its called for each token based on the token "name".
+			 */
+			@Override
+			public void exitAny_name(final Any_nameContext ctx) {
+				if(DEBUG) {
+					System.out.println(ctx.getText() + " - ctx : " + ctx.toInfoString(p));
+				}
+			}
 
 			//--- CREATE TABLE
 
@@ -230,10 +260,9 @@ public class SqlImport {
 			@Override
 			public void enterTable_constraint_foreign_key(
 					final Table_constraint_foreign_keyContext ctx) {
-				inTableConstraintForeignKey = true;
 				if(inCreateTable) {
-					cleEtrangere = new CleEtrangere();
-					cleEtrangere.setTableNameOrigin(table.getName());
+					foreignKey = new ForeignKey();
+					foreignKey.setTableNameOrigin(table.getName());
 				}
 			}
 
@@ -241,45 +270,42 @@ public class SqlImport {
 			public void exitTable_constraint_foreign_key(
 					final Table_constraint_foreign_keyContext ctx) {
 				if(inCreateTable) {
-					cleEtrangere.setTableNameOrigin(table.getName());
-					table.getCleEtrangeres().add(cleEtrangere);
-					cleEtrangere = null;
+					foreignKey.setTableNameOrigin(table.getName());
+					table.getForeignKeys().add(foreignKey);
+					foreignKey = null;
 				}
-				inTableConstraintForeignKey = false;
 			}
 
 			@Override
 			public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
-				inForeignKeyClause = true;
 				if(inColumnDef) {
-					cleEtrangere = new CleEtrangere();
-					cleEtrangere.setTableNameOrigin(table.getName());
-					cleEtrangere.getColumnNameOrigins().add(column.getName());
+					foreignKey = new ForeignKey();
+					foreignKey.setTableNameOrigin(table.getName());
+					foreignKey.getColumnNameOrigins().add(column.getName());
 				}
 			}
 
 			@Override
 			public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
 				if(inColumnDef) {
-					cleEtrangere.setTableNameOrigin(table.getName());
-					table.getCleEtrangeres().add(cleEtrangere);
-					cleEtrangere = null;
+					foreignKey.setTableNameOrigin(table.getName());
+					table.getForeignKeys().add(foreignKey);
+					foreignKey = null;
 				}
-				inForeignKeyClause = false;
 			}
 
 			@Override
 			public void exitForeign_table(final Foreign_tableContext ctx) {
 				if(inCreateTable) {
-					cleEtrangere.setTableNameTarget(ctx.getText());
+					foreignKey.setTableNameTarget(ctx.getText());
 				}
 			}
 
 			@Override
 			public void exitFk_origin_column_name(
 					final Fk_origin_column_nameContext ctx) {
-				if(cleEtrangere != null) {
-					cleEtrangere.getColumnNameOrigins().add(ctx.getText());
+				if(foreignKey != null) {
+					foreignKey.getColumnNameOrigins().add(ctx.getText());
 				}
 			}
 
@@ -287,7 +313,7 @@ public class SqlImport {
 			public void exitFk_target_column_name(
 					final Fk_target_column_nameContext ctx) {
 				if(inCreateTable) {
-					cleEtrangere.getColumnNameTargets().add(ctx.getText());
+					foreignKey.getColumnNameTargets().add(ctx.getText());
 				}
 			}
 

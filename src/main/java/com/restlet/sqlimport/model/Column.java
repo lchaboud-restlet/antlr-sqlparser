@@ -1,11 +1,30 @@
 package com.restlet.sqlimport.model;
 
+/**
+ * Table column
+ */
 public class Column {
 
+	/**
+	 * name
+	 */
 	private String name;
+	/**
+	 * type
+	 */
 	private String type;
+	/**
+	 * Length
+	 */
 	private String length;
+	/**
+	 * Indicates if the column must be not null
+	 */
 	private boolean isNotNull;
+	/**
+	 * Converted type.
+	 */
+	private String convertedType;
 
 	public String getName() {
 		return name;
@@ -37,6 +56,14 @@ public class Column {
 
 	public void setIsNotNull(final boolean isNotNull) {
 		this.isNotNull = isNotNull;
+	}
+
+	public String getConvertedType() {
+		return convertedType;
+	}
+
+	public void setConvertedType(final String convertedType) {
+		this.convertedType = convertedType;
 	}
 
 }

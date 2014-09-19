@@ -3,11 +3,26 @@ package com.restlet.sqlimport.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CleEtrangere {
+/**
+ * Foreing key
+ */
+public class ForeignKey {
 
+	/**
+	 * Name of columns in the origin table
+	 */
 	private List<String> columnNameOrigins = new ArrayList<String>();
+	/**
+	 * Name of columns in the foreign table
+	 */
 	private List<String> columnNameTargets = new ArrayList<String>();
+	/**
+	 * Name of the origin table
+	 */
 	private String tableNameOrigin;
+	/**
+	 * Name of the foreign table
+	 */
 	private String tableNameTarget;
 
 	public List<String> getColumnNameOrigins() {

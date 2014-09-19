@@ -3,8 +3,14 @@ package com.restlet.sqlimport.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Database
+ */
 public class Database {
 
+	/**
+	 * Tables
+	 */
 	private List<Table> tables = new ArrayList<Table>();
 
 	public List<Table> getTables() {

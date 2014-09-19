@@ -5,12 +5,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Table
+ */
 public class Table {
 
+	/**
+	 * name
+	 */
 	private String name;
+	/**
+	 * Columns by names
+	 */
 	private Map<String,Column> columnByNames = new HashMap<String,Column>();
+	/**
+	 * Column which is the primary key
+	 */
 	private Column primaryKey;
-	private List<CleEtrangere> cleEtrangeres = new ArrayList<CleEtrangere>();
+	/**
+	 * Foreign keys
+	 */
+	private List<ForeignKey> foreignKeys = new ArrayList<ForeignKey>();
+
+	/**
+	 * Get the foreign key which corresponding to the column.
+	 * @param column Column
+	 * @return Foreign key (null if not found)
+	 */
+	public ForeignKey getForeignKeyForColumnNameOrigin(final Column column) {
+		for(final ForeignKey foreignKey : getForeignKeys()) {
+			for(final String columnNameOrigin : foreignKey.getColumnNameOrigins()) {
+				if(column.getName().equals(columnNameOrigin)) {
+					return foreignKey;
+				}
+			}
+		}
+		return null;
+	}
 
 	public String getName() {
 		return name;
@@ -36,12 +67,12 @@ public class Table {
 		this.primaryKey = primaryKey;
 	}
 
-	public List<CleEtrangere> getCleEtrangeres() {
-		return cleEtrangeres;
+	public List<ForeignKey> getForeignKeys() {
+		return foreignKeys;
 	}
 
-	public void setCleEtrangeres(final List<CleEtrangere> cleEtrangeres) {
-		this.cleEtrangeres = cleEtrangeres;
+	public void setForeignKeys(final List<ForeignKey> foreignKeys) {
+		this.foreignKeys = foreignKeys;
 	}
 
 }

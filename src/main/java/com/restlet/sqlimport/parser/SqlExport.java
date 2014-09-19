@@ -4,9 +4,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.restlet.sqlimport.model.CleEtrangere;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
+import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.util.Util;
 
@@ -23,6 +23,7 @@ public class SqlExport {
 		util.write(lines, os);
 	}
 
+	/*
 	public List<String> getLines(final Database database) {
 		final List<String> lines = new ArrayList<String>();
 
@@ -41,14 +42,78 @@ public class SqlExport {
 			} else {
 				lines.add(" - Primary key : none");
 			}
-			for(final CleEtrangere cleEtrangere : table.getCleEtrangeres()) {
+			for(final ForeignKey foreignKey : table.getForeignKeys()) {
 				String txt = " - Foreign key : ";
-				txt += cleEtrangere.getTableNameOrigin()+"."+cleEtrangere.getColumnNameOrigins().get(0);
+				txt += foreignKey.getTableNameOrigin()+"."+foreignKey.getColumnNameOrigins().get(0);
 				txt += " -> ";
-				txt += cleEtrangere.getTableNameTarget()+"."+cleEtrangere.getColumnNameTargets().get(0);
+				txt += foreignKey.getTableNameTarget()+"."+foreignKey.getColumnNameTargets().get(0);
 				lines.add(txt);
 			}
 		}
+
+		return lines;
+	}
+	 */
+
+	/**
+	 * Get lines to write in the output file.
+	 * @param database Database schema
+	 * @return lines
+	 */
+	public List<String> getLines(final Database database) {
+
+		// Convert SQL types to Entity store types
+		final TypeConverter typeConverter = new TypeConverter();
+		typeConverter.convertTypeFromSQLToEntityStore(database);
+
+		// Output lines
+		final List<String> lines = new ArrayList<String>();
+
+		boolean isFirstTable = true;
+		lines.add("[");
+		for(final Table table : database.getTables()) {
+			if(isFirstTable) {
+				isFirstTable = false;
+			} else {
+				// Add comma
+				final String lastLine = lines.get(lines.size()-1);
+				lines.set(lines.size()-1, lastLine+",");
+			}
+			lines.add("  { \"name\": \""+table.getName()+"\",");
+			lines.add("    \"fields\": [");
+			boolean isFirstColumn = true;
+			for(final String columnName : table.getColumnByNames().keySet()) {
+				if(isFirstColumn) {
+					isFirstColumn = false;
+				} else {
+					// Add comma
+					final String lastLine = lines.get(lines.size()-1);
+					lines.set(lines.size()-1, lastLine+",");
+				}
+				final Column column = table.getColumnByNames().get(columnName);
+				final StringBuffer txt = new StringBuffer();
+				txt.append("      {");
+				txt.append(" \"name\": \""+column.getName()+"\"");
+				final ForeignKey foreignKey = table.getForeignKeyForColumnNameOrigin(column);
+				if(foreignKey == null) {
+					txt.append(", \"type\": \""+column.getConvertedType()+"\"");
+				} else {
+					txt.append(", \"type\": \""+foreignKey.getTableNameTarget()+"\"");
+				}
+				txt.append(", \"minOccurs\": ");
+				if(column.getIsNotNull()) {
+					txt.append("1");
+				} else {
+					txt.append("0");
+				}
+				txt.append(", \"maxOccurs\": 1");
+				txt.append(" }");
+				lines.add(txt.toString());
+			}
+			lines.add("    ]");
+			lines.add("  }");
+		}
+		lines.add("]");
 
 		return lines;
 	}

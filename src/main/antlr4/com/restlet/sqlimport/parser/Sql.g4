@@ -277,18 +277,22 @@ type_name
 column_constraint
  : ( K_CONSTRAINT name )?
    ( column_constraint_primary_key
+   | column_constraint_foreign_key
    | column_constraint_not_null
    | column_constraint_null
    | K_UNIQUE conflict_clause
    | K_CHECK '(' expr ')'
    | K_DEFAULT (signed_number | literal_value | '(' expr ')')
    | K_COLLATE collation_name
-   | foreign_key_clause
    )
  ;
 
 column_constraint_primary_key
  : K_PRIMARY K_KEY ( K_ASC | K_DESC )? conflict_clause K_AUTOINCREMENT?
+ ;
+
+column_constraint_foreign_key
+ : foreign_key_clause
  ;
 
 column_constraint_not_null
@@ -367,7 +371,7 @@ foreign_key_clause
  ;
 
 fk_target_column_name
- : column_name
+ : name
  ;
 
 raise_function
