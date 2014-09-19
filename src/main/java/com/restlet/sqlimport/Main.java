@@ -9,6 +9,9 @@ import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.parser.SqlImport;
 import com.restlet.sqlimport.util.Util;
 
+/**
+ * Main class to parse SQL file and export to a file in the pivot format.
+ */
 public class Main {
 
 	public static void main(final String[] args) throws FileNotFoundException {

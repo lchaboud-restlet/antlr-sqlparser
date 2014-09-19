@@ -11,10 +11,15 @@ import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.util.Util;
 
 /**
- * Write database schema in a file.
+ * Write database schema in a file in the pivot format.
  */
 public class ExportToPivotFormat {
 
+	/**
+	 * Write database in the file in the pivot format.
+	 * @param database Database
+	 * @param os Output stream
+	 */
 	public void write(final Database database, final OutputStream os) {
 
 		final List<String> lines = getLines(database);
@@ -62,10 +67,13 @@ public class ExportToPivotFormat {
 				final StringBuffer txt = new StringBuffer();
 				txt.append("      {");
 				txt.append(" \"name\": \""+column.getName()+"\"");
+				// Foreign key
 				final ForeignKey foreignKey = table.getForeignKeyForColumnNameOrigin(column);
 				if(foreignKey == null) {
+					// converted type
 					txt.append(", \"type\": \""+column.getConvertedType()+"\"");
 				} else {
+					// foreign key : type is in the name of the foreign table
 					txt.append(", \"type\": \""+foreignKey.getTableNameTarget()+"\"");
 				}
 				txt.append(", \"minOccurs\": ");
