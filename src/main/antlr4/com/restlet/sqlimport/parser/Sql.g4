@@ -354,7 +354,7 @@ expr
  ;
 
 foreign_key_clause
- : K_REFERENCES foreign_table ( '(' column_name ( ',' column_name )* ')' )?
+ : K_REFERENCES foreign_table ( '(' fk_target_column_name ( ',' fk_target_column_name )* ')' )?
    ( ( K_ON ( K_DELETE | K_UPDATE ) ( K_SET K_NULL
                                     | K_SET K_DEFAULT
                                     | K_CASCADE
@@ -364,6 +364,10 @@ foreign_key_clause
      ) 
    )*
    ( K_NOT? K_DEFERRABLE ( K_INITIALLY K_DEFERRED | K_INITIALLY K_IMMEDIATE )? )?
+ ;
+
+fk_target_column_name
+ : column_name
  ;
 
 raise_function
@@ -380,8 +384,16 @@ table_constraint
  : ( K_CONSTRAINT name )?
    ( ( K_PRIMARY K_KEY | K_UNIQUE ) '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
    | K_CHECK '(' expr ')'
-   | K_FOREIGN K_KEY '(' column_name ( ',' column_name )* ')' foreign_key_clause
+   | table_constraint_foreign_key
    )
+ ;
+
+table_constraint_foreign_key
+ : K_FOREIGN K_KEY '(' fk_origin_column_name ( ',' fk_origin_column_name )* ')' foreign_key_clause
+ ;
+
+fk_origin_column_name
+ : column_name
  ;
 
 with_clause

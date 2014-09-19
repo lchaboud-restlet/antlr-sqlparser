@@ -1,6 +1,14 @@
 ANTLR-SQLPARSER
 ===============
 
+Main
+====
+
+Run : ```java com.restlet.sqlimport.Main "[input file]" "[output file]"```
+, with : 
+ - [input file] : file path to the SQL input file
+ - [output file] : file path to the output file
+
 Tests
 =====
 

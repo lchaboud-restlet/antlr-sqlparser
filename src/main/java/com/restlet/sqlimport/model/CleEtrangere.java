@@ -1,35 +1,38 @@
 package com.restlet.sqlimport.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CleEtrangere {
 
-	private Column columnOrigin;
-	private Column columnTarget;
-	private String tableOrigin;
-	private String tableTarget;
+	private List<String> columnNameOrigins = new ArrayList<String>();
+	private List<String> columnNameTargets = new ArrayList<String>();
+	private String tableNameOrigin;
+	private String tableNameTarget;
 
-	public Column getColumnOrigin() {
-		return columnOrigin;
+	public List<String> getColumnNameOrigins() {
+		return columnNameOrigins;
 	}
-	public void setColumnOrigin(final Column columnOrigin) {
-		this.columnOrigin = columnOrigin;
+	public void setColumnNameOrigins(final List<String> columnNameOrigins) {
+		this.columnNameOrigins = columnNameOrigins;
 	}
-	public Column getColumnTarget() {
-		return columnTarget;
+	public List<String> getColumnNameTargets() {
+		return columnNameTargets;
 	}
-	public void setColumnTarget(final Column columnTarget) {
-		this.columnTarget = columnTarget;
+	public void setColumnNameTargets(final List<String> columnNameTargets) {
+		this.columnNameTargets = columnNameTargets;
 	}
-	public String getTableOrigin() {
-		return tableOrigin;
+	public String getTableNameOrigin() {
+		return tableNameOrigin;
 	}
-	public void setTableOrigin(final String tableOrigin) {
-		this.tableOrigin = tableOrigin;
+	public void setTableNameOrigin(final String tableNameOrigin) {
+		this.tableNameOrigin = tableNameOrigin;
 	}
-	public String getTableTarget() {
-		return tableTarget;
+	public String getTableNameTarget() {
+		return tableNameTarget;
 	}
-	public void setTableTarget(final String tableTarget) {
-		this.tableTarget = tableTarget;
+	public void setTableNameTarget(final String tableNameTarget) {
+		this.tableNameTarget = tableNameTarget;
 	}
 
 }

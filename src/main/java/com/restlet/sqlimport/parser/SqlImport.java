@@ -19,9 +19,12 @@ import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyConte
 import com.restlet.sqlimport.parser.SqlParser.Column_defContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Create_table_stmtContext;
+import com.restlet.sqlimport.parser.SqlParser.Fk_origin_column_nameContext;
+import com.restlet.sqlimport.parser.SqlParser.Fk_target_column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
 import com.restlet.sqlimport.parser.SqlParser.NameContext;
+import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 
@@ -96,7 +99,8 @@ public class SqlImport {
 			boolean inCreateTable = false;
 			boolean inColumnDef = false;
 			boolean inTypeName = false;
-			boolean inForeignKey = false;
+			boolean inForeignKeyClause = false;
+			boolean inTableConstraintForeignKey = false;
 
 			//--- CREATE TABLE
 
@@ -224,22 +228,67 @@ public class SqlImport {
 			//--- Foreign Key
 
 			@Override
-			public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
-				inForeignKey = true;
-				cleEtrangere = new CleEtrangere();
-			}
-
-			@Override
-			public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
-				inForeignKey = false;
+			public void enterTable_constraint_foreign_key(
+					final Table_constraint_foreign_keyContext ctx) {
+				inTableConstraintForeignKey = true;
 				if(inCreateTable) {
-					table.getCleEtrangeres().add(cleEtrangere);
+					cleEtrangere = new CleEtrangere();
+					cleEtrangere.setTableNameOrigin(table.getName());
 				}
 			}
 
 			@Override
+			public void exitTable_constraint_foreign_key(
+					final Table_constraint_foreign_keyContext ctx) {
+				if(inCreateTable) {
+					cleEtrangere.setTableNameOrigin(table.getName());
+					table.getCleEtrangeres().add(cleEtrangere);
+					cleEtrangere = null;
+				}
+				inTableConstraintForeignKey = false;
+			}
+
+			@Override
+			public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
+				inForeignKeyClause = true;
+				if(inColumnDef) {
+					cleEtrangere = new CleEtrangere();
+					cleEtrangere.setTableNameOrigin(table.getName());
+					cleEtrangere.getColumnNameOrigins().add(column.getName());
+				}
+			}
+
+			@Override
+			public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
+				if(inColumnDef) {
+					cleEtrangere.setTableNameOrigin(table.getName());
+					table.getCleEtrangeres().add(cleEtrangere);
+					cleEtrangere = null;
+				}
+				inForeignKeyClause = false;
+			}
+
+			@Override
 			public void exitForeign_table(final Foreign_tableContext ctx) {
-				cleEtrangere.setTableTarget(ctx.getText());
+				if(inCreateTable) {
+					cleEtrangere.setTableNameTarget(ctx.getText());
+				}
+			}
+
+			@Override
+			public void exitFk_origin_column_name(
+					final Fk_origin_column_nameContext ctx) {
+				if(cleEtrangere != null) {
+					cleEtrangere.getColumnNameOrigins().add(ctx.getText());
+				}
+			}
+
+			@Override
+			public void exitFk_target_column_name(
+					final Fk_target_column_nameContext ctx) {
+				if(inCreateTable) {
+					cleEtrangere.getColumnNameTargets().add(ctx.getText());
+				}
 			}
 
 		});
