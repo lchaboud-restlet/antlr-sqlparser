@@ -10,9 +10,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
+import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
@@ -28,6 +28,9 @@ import com.restlet.sqlimport.parser.SqlParser.NameContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
+import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportLine;
+import com.restlet.sqlimport.report.ReportStatus;
 
 public class SqlImport {
 
@@ -37,23 +40,62 @@ public class SqlImport {
 	public static final boolean DEBUG = false;
 
 	/**
+	 * Log activated.
+	 */
+	public static final boolean LOG_ACTIVATED = true;
+
+	/**
+	 * Report.
+	 */
+	private final Report report;
+
+	/**
+	 * Constructor.
+	 * @param report Report (must not be null)
+	 */
+	public SqlImport(final Report report) {
+		this.report = report;
+	}
+
+
+	/**
 	 * Errors listener which display SQL query.
 	 */
 	public class SqlImportErrorListener extends BaseErrorListener {
 		public String query;
+		public boolean hasError;
 		@Override
 		public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line, final int charPositionInLine, final String msg, final RecognitionException e) {
-			System.out.println("------------");
-			System.out.println("Error on query : \n"+query);
-			System.out.println("=> line " + line + " : " + msg);
-			if(e != null) {
-				if(e.getMessage() != null) {
-					System.out.println(e.getMessage());
-				}
-				if(e.getCtx() != null) {
-					System.out.println("Context : "+e.getCtx());
+
+			hasError = true;
+
+			if(LOG_ACTIVATED) {
+				System.out.println("------------");
+				System.out.println("Error on query : \n"+query);
+				System.out.println("=> line " + line + " : " + msg);
+				if(e != null) {
+					if(e.getMessage() != null) {
+						System.out.println(e.getMessage());
+					}
+					if(e.getCtx() != null) {
+						System.out.println("Context : "+e.getCtx());
+					}
 				}
 			}
+
+			final ReportLine reportLine = getReport().getReportLineByQuerys().get(query);
+			reportLine.setReportStatus(ReportStatus.PARSING_ERROR);
+			final StringBuffer strBuffer = new StringBuffer();
+			strBuffer.append("=> line ").append(line).append(" : ").append(msg);
+			if(e != null) {
+				if(e.getMessage() != null) {
+					strBuffer.append(e.getMessage());
+				}
+				if(e.getCtx() != null) {
+					strBuffer.append("Context : "+e.getCtx());
+				}
+			}
+			reportLine.setMsg(strBuffer.toString());
 		}
 	}
 
@@ -68,7 +110,7 @@ public class SqlImport {
 			return null;
 		}
 
-		final GetSqlQuery getSqlQuery = new GetSqlQuery();
+		final GetSqlQuery getSqlQuery = new GetSqlQuery(getReport());
 		final List<String> querys = getSqlQuery.getSqlQuerys(is);
 		final Database database = read(querys);
 
@@ -319,6 +361,19 @@ public class SqlImport {
 
 		});
 		p.parse();
+
+		if(!listener.hasError) {
+			final ReportLine reportLine = getReport().getReportLineByQuerys().get(query);
+			reportLine.setReportStatus(ReportStatus.SUCCESS);
+		}
+	}
+
+	/**
+	 * Get report.
+	 * @return report.
+	 */
+	public Report getReport() {
+		return report;
 	}
 
 }

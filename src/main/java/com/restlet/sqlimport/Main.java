@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import com.restlet.sqlimport.export.ExportToPivotFormat;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.parser.SqlImport;
+import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportLine;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -36,11 +38,23 @@ public class Main {
 			in = util.getInputStream(input);
 			os = util.getOutputStream(output);
 
-			final SqlImport sqlImport = new SqlImport();
+			final Report report = new Report();
+
+			final SqlImport sqlImport = new SqlImport(report);
 			final Database database = sqlImport.read(in);
 
 			final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
 			sqlExport.write(database, os);
+
+			for(final ReportLine reportLine : report.getReportLines()) {
+				System.out.println("---");
+				System.out.println("Query : \n"+reportLine.getQuery());
+				System.out.println("=> Status : " + reportLine.getReportStatus());
+				if(reportLine.getMsg() != null) {
+					System.out.println(reportLine.getMsg());
+				}
+				System.out.println("");
+			}
 		}
 		finally {
 			if(in != null) {

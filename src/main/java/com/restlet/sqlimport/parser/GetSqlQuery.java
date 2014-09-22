@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportLine;
+import com.restlet.sqlimport.report.ReportStatus;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -12,24 +15,37 @@ import com.restlet.sqlimport.util.Util;
 public class GetSqlQuery {
 
 	/**
+	 * Report.
+	 */
+	private final Report report;
+
+	/**
+	 * Constructor.
+	 * @param report Report (must not be null)
+	 */
+	public GetSqlQuery(final Report report) {
+		this.report = report;
+	}
+
+	/**
 	 * Indicates if the query is correct
 	 * @param query Query
 	 * @return boolean
 	 */
-	public boolean isQueryOK(final String query) {
+	public boolean isQueryFiltered(final String query) {
 		final String queryUpperCase = query.toUpperCase();
 		if(queryUpperCase.indexOf("CREATE TABLE") != -1) {
-			return true;
+			return false;
 		}
 		/**
 		 * Decomment this to support ALTER TABLE with ADD CONSTRAINT and MODIFY :
 		if(queryUpperCase.indexOf("ALTER TABLE") != -1) {
 			if((queryUpperCase.indexOf("ADD CONSTRAINT") != -1) || (queryUpperCase.indexOf("MODIFY") != -1)) {
-				return true;
+				return false;
 			}
 		}
 		 */
-		return false;
+		return true;
 	}
 
 	/**
@@ -64,9 +80,17 @@ public class GetSqlQuery {
 
 			final String query = content.substring(posStart, posEnd);
 
-			if(isQueryOK(query)) {
+			final boolean isFiltered = isQueryFiltered(query);
+			if(!isFiltered) {
 				querys.add(query);
 			}
+
+			final ReportLine reportLine = new ReportLine();
+			reportLine.setQuery(query);
+			if(isFiltered) {
+				reportLine.setReportStatus(ReportStatus.FILTERED);
+			}
+			getReport().add(reportLine);
 
 			if((posEnd + 1) >= content.length()) {
 				posStart = -1;
@@ -201,6 +225,14 @@ public class GetSqlQuery {
 		}
 
 		return pos;
+	}
+
+	/**
+	 * Get report
+	 * @return report
+	 */
+	public Report getReport() {
+		return report;
 	}
 
 }
