@@ -1,6 +1,7 @@
 package com.restlet.sqlimport;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -28,14 +29,37 @@ public class Main {
 
 		final Util util = new Util();
 
-		final InputStream in = util.getInputStream(input);
-		final OutputStream os = util.getOutputStream(output);
+		InputStream in = null;
+		OutputStream os = null;
 
-		final SqlImport sqlImport = new SqlImport();
-		final Database database = sqlImport.read(in);
+		try {
+			in = util.getInputStream(input);
+			os = util.getOutputStream(output);
 
-		final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
-		sqlExport.write(database, os);
+			final SqlImport sqlImport = new SqlImport();
+			final Database database = sqlImport.read(in);
+
+			final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
+			sqlExport.write(database, os);
+		}
+		finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (final IOException e) {
+					System.err.println(e.getMessage());
+					System.err.println(e);
+				}
+			}
+			if(os != null) {
+				try {
+					os.close();
+				} catch (final IOException e) {
+					System.err.println(e.getMessage());
+					System.err.println(e);
+				}
+			}
+		}
 	}
 
 }

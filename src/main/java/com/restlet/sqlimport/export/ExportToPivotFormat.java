@@ -1,8 +1,8 @@
 package com.restlet.sqlimport.export;
 
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.json.JSONStringer;
 
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
@@ -22,10 +22,10 @@ public class ExportToPivotFormat {
 	 */
 	public void write(final Database database, final OutputStream os) {
 
-		final List<String> lines = getLines(database);
+		final String content = getLines(database);
 
 		final Util util = new Util();
-		util.write(lines, os);
+		util.write(content, os);
 	}
 
 	/**
@@ -33,65 +33,47 @@ public class ExportToPivotFormat {
 	 * @param database Database schema
 	 * @return lines
 	 */
-	public List<String> getLines(final Database database) {
+	public String getLines(final Database database) {
+
+		final JSONStringer jsonStringer = new JSONStringer();
 
 		// Convert SQL types to Entity store types
 		final TypeConverter typeConverter = new TypeConverter();
 		typeConverter.convertTypeFromSQLToEntityStore(database);
 
-		// Output lines
-		final List<String> lines = new ArrayList<String>();
-
-		boolean isFirstTable = true;
-		lines.add("[");
+		jsonStringer.array();
 		for(final Table table : database.getTables()) {
-			if(isFirstTable) {
-				isFirstTable = false;
-			} else {
-				// Add comma
-				final String lastLine = lines.get(lines.size()-1);
-				lines.set(lines.size()-1, lastLine+",");
-			}
-			lines.add("  { \"name\": \""+table.getName()+"\",");
-			lines.add("    \"fields\": [");
-			boolean isFirstColumn = true;
+			jsonStringer.object();
+			jsonStringer.key("name").value(table.getName());
+			jsonStringer.key("fields").array();
 			for(final String columnName : table.getColumnByNames().keySet()) {
-				if(isFirstColumn) {
-					isFirstColumn = false;
-				} else {
-					// Add comma
-					final String lastLine = lines.get(lines.size()-1);
-					lines.set(lines.size()-1, lastLine+",");
-				}
 				final Column column = table.getColumnByNames().get(columnName);
-				final StringBuffer txt = new StringBuffer();
-				txt.append("      {");
-				txt.append(" \"name\": \""+column.getName()+"\"");
+				jsonStringer.object();
+				jsonStringer.key("name").value(column.getName());
 				// Foreign key
 				final ForeignKey foreignKey = table.getForeignKeyForColumnNameOrigin(column);
 				if(foreignKey == null) {
 					// converted type
-					txt.append(", \"type\": \""+column.getConvertedType()+"\"");
+					jsonStringer.key("type").value(column.getConvertedType());
 				} else {
 					// foreign key : type is in the name of the foreign table
-					txt.append(", \"type\": \""+foreignKey.getTableNameTarget()+"\"");
+					jsonStringer.key("type").value(foreignKey.getTableNameTarget());
 				}
-				txt.append(", \"minOccurs\": ");
+				jsonStringer.key("minOccurs").value(1);
+				jsonStringer.key("maxOccurs").value(1);
 				if(column.getIsNotNull()) {
-					txt.append("1");
+					jsonStringer.key("nullable").value(false);
 				} else {
-					txt.append("0");
+					jsonStringer.key("nullable").value(true);
 				}
-				txt.append(", \"maxOccurs\": 1");
-				txt.append(" }");
-				lines.add(txt.toString());
+				jsonStringer.endObject();
 			}
-			lines.add("    ]");
-			lines.add("  }");
+			jsonStringer.endArray();
+			jsonStringer.endObject();
 		}
-		lines.add("]");
+		jsonStringer.endArray();
 
-		return lines;
+		return jsonStringer.toString();
 	}
 
 }

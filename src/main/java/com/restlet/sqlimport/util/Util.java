@@ -144,4 +144,24 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Write content to a output stream.
+	 * @param content Content
+	 * @param os Output stream
+	 */
+	public void write(final String content, final OutputStream os) {
+		BufferedWriter bw = null;
+
+		bw = new BufferedWriter(new OutputStreamWriter(os));
+
+		try {
+			bw.write(content);
+			bw.close();
+		} catch (final IOException e) {
+			System.err.println(e.getMessage());
+			System.err.println(e);
+			throw new RuntimeException(e);
+		}
+	}
+
 }
