@@ -27,6 +27,8 @@ public class TypeConverterTest {
 		// Integer
 		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("INTEGER"));
 		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("INT"));
+		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("NUMBER"));
+		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("DECIMAL"));
 
 		// Boolean
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOLEAN"));

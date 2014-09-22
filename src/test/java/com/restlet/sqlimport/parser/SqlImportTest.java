@@ -165,7 +165,7 @@ public class SqlImportTest {
 		assertFalse(t3_nom.getIsNotNull());
 	}
 
-	// @Test
+	@Test
 	public void testRead_mysql() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/mysql.sql");
@@ -174,7 +174,9 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.read(in);
 
-		assertEquals(2, database.getTables().size());
+		assertEquals(5, database.getTables().size());
+
+
 	}
 
 	// @Test

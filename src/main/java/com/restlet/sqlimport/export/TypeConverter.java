@@ -79,6 +79,12 @@ public class TypeConverter {
 		if("INTEGER".equalsIgnoreCase(sqlType)) {
 			return true;
 		}
+		if("DECIMAL".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
+		if("NUMBER".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
 		return false;
 	}
 
