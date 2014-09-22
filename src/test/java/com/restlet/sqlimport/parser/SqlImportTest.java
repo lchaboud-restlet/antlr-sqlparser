@@ -14,10 +14,11 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
+import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -25,7 +26,8 @@ import com.restlet.sqlimport.util.Util;
  */
 public class SqlImportTest {
 
-	private SqlImport sqlImport = new SqlImport();
+	private Report report = new Report();
+	private SqlImport sqlImport = new SqlImport(report);
 	private Util util = new Util();
 
 	// @Test
@@ -81,6 +83,7 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.read(in);
 
+		// Database schema
 		assertEquals(3, database.getTables().size());
 		final Table table3 = database.getTables().get(0);
 		assertEquals("table3", table3.getName());

@@ -89,6 +89,8 @@ public class GetSqlQuery {
 			reportLine.setQuery(query);
 			if(isFiltered) {
 				reportLine.setReportStatus(ReportStatus.FILTERED);
+			} else {
+				reportLine.setReportStatus(ReportStatus.TO_PARSE);
 			}
 			getReport().add(reportLine);
 
