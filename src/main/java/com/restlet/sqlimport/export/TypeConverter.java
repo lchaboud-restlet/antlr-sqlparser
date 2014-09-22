@@ -32,6 +32,9 @@ public class TypeConverter {
 	 * @return Entity store type
 	 */
 	public String convertTypeFromSQLToEntityStore(final String sqlType) {
+		if(sqlType == null) {
+			return null;
+		}
 		if(isString(sqlType)) {
 			return TYPE_STRING;
 		}
