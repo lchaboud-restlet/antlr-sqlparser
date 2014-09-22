@@ -23,6 +23,8 @@ public class TypeConverterTest {
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("VARCHAR"));
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("VARCHAR2"));
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("CHAR"));
+		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("character"));
+		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("character varying"));
 
 		// Integer
 		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("INTEGER"));

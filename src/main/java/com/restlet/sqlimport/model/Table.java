@@ -21,7 +21,7 @@ public class Table {
 	/**
 	 * Column which is the primary key
 	 */
-	private Column primaryKey;
+	private PrimaryKey primaryKey = new PrimaryKey();
 	/**
 	 * Foreign keys
 	 */
@@ -59,11 +59,11 @@ public class Table {
 		this.columnByNames = columnByNames;
 	}
 
-	public Column getPrimaryKey() {
+	public PrimaryKey getPrimaryKey() {
 		return primaryKey;
 	}
 
-	public void setPrimaryKey(final Column primaryKey) {
+	public void setPrimaryKey(final PrimaryKey primaryKey) {
 		this.primaryKey = primaryKey;
 	}
 

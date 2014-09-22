@@ -24,13 +24,16 @@ import com.restlet.sqlimport.parser.SqlParser.Fk_origin_column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Fk_target_column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
+import com.restlet.sqlimport.parser.SqlParser.Indexed_columnContext;
 import com.restlet.sqlimport.parser.SqlParser.NameContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContext;
+import com.restlet.sqlimport.parser.SqlParser.Table_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
 import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.util.Util;
 
 public class SqlImport {
 
@@ -160,9 +163,12 @@ public class SqlImport {
 			Column column;
 			ForeignKey foreignKey;
 
-			boolean inCreateTable = false;
-			boolean inColumnDef = false;
-			boolean inTypeName = false;
+			boolean inCreateTable = false; // CREATE TABLE
+			boolean inColumnDef = false; // Column definition in CREATE TABLE
+			boolean inTypeName = false; // Column type in the column definition in CREATE TABLE
+			boolean inTable_constraint_primary_key = false; // PRIMARY KEY in CREATE TABLE
+
+			Util util = new Util();
 
 			/**
 			 * Used only for debug, its called for each token based on the token "name".
@@ -201,7 +207,7 @@ public class SqlImport {
 			@Override
 			public void exitTable_name(final Table_nameContext ctx) {
 				if(inCreateTable) {
-					table.setName(ctx.getText());
+					table.setName(util.unformatSqlName(ctx.getText()));
 				}
 			}
 
@@ -238,7 +244,7 @@ public class SqlImport {
 			@Override
 			public void exitColumn_name(final Column_nameContext ctx) {
 				if(inCreateTable && inColumnDef) {
-					column.setName(ctx.getText());
+					column.setName(util.unformatSqlName(ctx.getText()));
 				}
 			}
 
@@ -268,9 +274,9 @@ public class SqlImport {
 			public void exitName(final NameContext ctx) {
 				if(inCreateTable && inColumnDef && inTypeName) {
 					if(column.getType() == null) {
-						column.setType(ctx.getText());
+						column.setType(util.unformatSqlName(ctx.getText()));
 					} else {
-						column.setType(column.getType() + " " + ctx.getText());
+						column.setType(column.getType() + " " + util.unformatSqlName(ctx.getText()));
 					}
 				}
 			}
@@ -287,13 +293,35 @@ public class SqlImport {
 				}
 			}
 
-			//--- Primary Key
+			//--- Primary Key in Column definition
 
 			@Override
 			public void exitColumn_constraint_primary_key(
 					final Column_constraint_primary_keyContext ctx) {
 				if(inCreateTable && inColumnDef) {
-					table.setPrimaryKey(column);
+					table.getPrimaryKey().getColumnNames().add(column.getName());
+				}
+			}
+
+			//--- Primary Key in Table definition
+
+			@Override
+			public void enterTable_constraint_primary_key(
+					final Table_constraint_primary_keyContext ctx) {
+				inTable_constraint_primary_key = true;
+			}
+
+			@Override
+			public void exitTable_constraint_primary_key(
+					final Table_constraint_primary_keyContext ctx) {
+				inTable_constraint_primary_key = false;
+			}
+
+			@Override
+			public void exitIndexed_column(final Indexed_columnContext ctx) {
+				if(inCreateTable && inTable_constraint_primary_key) {
+					final String columnName = util.unformatSqlName(ctx.getText());
+					table.getPrimaryKey().getColumnNames().add(columnName);
 				}
 			}
 
@@ -339,7 +367,7 @@ public class SqlImport {
 			@Override
 			public void exitForeign_table(final Foreign_tableContext ctx) {
 				if(inCreateTable) {
-					foreignKey.setTableNameTarget(ctx.getText());
+					foreignKey.setTableNameTarget(util.unformatSqlName(ctx.getText()));
 				}
 			}
 
@@ -347,7 +375,7 @@ public class SqlImport {
 			public void exitFk_origin_column_name(
 					final Fk_origin_column_nameContext ctx) {
 				if(foreignKey != null) {
-					foreignKey.getColumnNameOrigins().add(ctx.getText());
+					foreignKey.getColumnNameOrigins().add(util.unformatSqlName(ctx.getText()));
 				}
 			}
 
@@ -355,7 +383,7 @@ public class SqlImport {
 			public void exitFk_target_column_name(
 					final Fk_target_column_nameContext ctx) {
 				if(inCreateTable) {
-					foreignKey.getColumnNameTargets().add(ctx.getText());
+					foreignKey.getColumnNameTargets().add(util.unformatSqlName(ctx.getText()));
 				}
 			}
 

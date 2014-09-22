@@ -64,6 +64,12 @@ public class TypeConverter {
 		if("VARCHAR2".equalsIgnoreCase(sqlType)) {
 			return true;
 		}
+		if("character".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
+		if("character varying".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
 		return false;
 	}
 

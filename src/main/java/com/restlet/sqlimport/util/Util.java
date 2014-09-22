@@ -164,4 +164,29 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Format name from SQL file.
+	 * @param sqlName Name in SQL file
+	 * @return name
+	 */
+	public String unformatSqlName(final String sqlName) {
+		if(sqlName == null) {
+			return null;
+		}
+		String name = sqlName;
+		// escape character : "
+		if(name.length() >= 2) {
+			if((name.charAt(0) == '"') && (name.charAt(name.length()-1) == '"')) {
+				name = name.substring(1,name.length()-1);
+			}
+		}
+		// escape character : `
+		if(name.length() >= 2) {
+			if((name.charAt(0) == '`') && (name.charAt(name.length()-1) == '`')) {
+				name = name.substring(1,name.length()-1);
+			}
+		}
+		return name;
+	}
+
 }

@@ -119,7 +119,7 @@ create_table_stmt
    ( database_name '.' )? table_name
    ( '(' column_def ( ',' table_constraint | ',' column_def )* ')' ( K_WITHOUT IDENTIFIER )?
    | K_AS select_stmt 
-   )
+   ) (unknown)?
  ;
 
 create_trigger_stmt
@@ -270,8 +270,8 @@ column_def
  ;
 
 type_name
- : name ( '(' signed_number ')'
-         | '(' signed_number ',' signed_number ')' )?
+ : name ( '(' signed_number (any_name)? ')'
+         | '(' signed_number (any_name)? ',' signed_number (any_name)? ')' )?
  ;
 
 column_constraint
@@ -282,7 +282,7 @@ column_constraint
    | column_constraint_null
    | K_UNIQUE conflict_clause
    | K_CHECK '(' expr ')'
-   | K_DEFAULT (signed_number | literal_value | '(' expr ')')
+   | K_DEFAULT (signed_number | literal_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )
    | K_COLLATE collation_name
    )
  ;
@@ -386,7 +386,8 @@ indexed_column
 
 table_constraint
  : ( K_CONSTRAINT name )?
-   ( ( K_PRIMARY K_KEY | K_UNIQUE ) '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
+   ( table_constraint_primary_key
+   | table_constraint_unique
    | K_CHECK '(' expr ')'
    | table_constraint_foreign_key
    )
@@ -394,6 +395,14 @@ table_constraint
 
 table_constraint_foreign_key
  : K_FOREIGN K_KEY '(' fk_origin_column_name ( ',' fk_origin_column_name )* ')' foreign_key_clause
+ ;
+
+table_constraint_primary_key
+ : K_PRIMARY K_KEY '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
+ ;
+
+table_constraint_unique
+ : K_UNIQUE '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
  ;
 
 fk_origin_column_name
@@ -632,9 +641,15 @@ keyword
  | K_WHERE
  | K_WITH
  | K_WITHOUT
+ | K_NEXTVAL
  ;
 
 // TODO check all names below
+
+//[a-zA-Z_0-9\t \-\[\]\=]+
+unknown
+ : .+
+ ;
 
 name
  : any_name
@@ -813,6 +828,7 @@ K_LIKE : L I K E;
 K_LIMIT : L I M I T;
 K_MATCH : M A T C H;
 K_NATURAL : N A T U R A L;
+K_NEXTVAL : N E X T V A L;
 K_NO : N O;
 K_NOT : N O T;
 K_NOTNULL : N O T N U L L;

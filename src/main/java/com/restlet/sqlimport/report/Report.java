@@ -1,7 +1,9 @@
 package com.restlet.sqlimport.report;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +30,23 @@ public class Report {
 	 */
 	public Collection<ReportLine> getReportLines() {
 		return reportLineByQuerys.values();
+	}
+
+	/**
+	 * Get report lines belongs their status
+	 * @param reportStatus Report status
+	 * @return Number of report lines
+	 */
+	public List<ReportLine> getReportLinesForStatus(final ReportStatus reportStatus) {
+		final List<ReportLine> reportLines = new ArrayList<ReportLine>();
+
+		for(final ReportLine reportLine : getReportLines()) {
+			if(reportLine.getReportStatus() == reportStatus) {
+				reportLines.add(reportLine);
+			}
+		}
+
+		return reportLines;
 	}
 
 	public Map<String, ReportLine> getReportLineByQuerys() {

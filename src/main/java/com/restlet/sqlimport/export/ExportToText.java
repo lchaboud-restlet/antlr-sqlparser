@@ -37,7 +37,10 @@ public class ExportToText {
 				lines.add("   - type : "+column.getType());
 			}
 			if(table.getPrimaryKey() != null) {
-				lines.add(" - Primary key : "+table.getPrimaryKey().getName());
+				lines.add(" - Primary key : ");
+				for(final String columnName : table.getPrimaryKey().getColumnNames()) {
+					lines.add("   - "+columnName);
+				}
 			} else {
 				lines.add(" - Primary key : none");
 			}
