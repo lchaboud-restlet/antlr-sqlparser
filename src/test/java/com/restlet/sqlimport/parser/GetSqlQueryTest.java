@@ -39,5 +39,57 @@ public class GetSqlQueryTest {
 
 	}
 
+	@Test
+	public void testRead_mysql() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/mysql.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+
+		// Then
+		assertEquals(5, lines.size());
+	}
+
+	@Test
+	public void testRead_postgres() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/postgres.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+
+		// Then
+		assertEquals(9, lines.size());
+	}
+
+	@Test
+	public void testRead_oracle1() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/oracle1.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+
+		// Then
+		assertEquals(4, lines.size());
+	}
+
+	@Test
+	public void testRead_oracle2() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/oracle2.sql");
+		final InputStream in = new FileInputStream(file);
+
+		// When
+		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+
+		// Then
+		assertEquals(3, lines.size());
+	}
+
 
 }
