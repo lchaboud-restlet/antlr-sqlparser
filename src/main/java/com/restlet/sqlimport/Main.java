@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.restlet.sqlimport.export.ExportToPivotFormat;
+import com.restlet.sqlimport.export.TypeConverter;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.parser.SqlImport;
 import com.restlet.sqlimport.report.Report;
@@ -40,9 +41,15 @@ public class Main {
 
 			final Report report = new Report();
 
+			// Load SQL file, filter and parse SQL queries
 			final SqlImport sqlImport = new SqlImport(report);
 			final Database database = sqlImport.read(in);
 
+			// Convert SQL types to Entity store types
+			final TypeConverter typeConverter = new TypeConverter();
+			typeConverter.convertTypeFromSQLToEntityStore(database);
+
+			// Export
 			final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
 			sqlExport.write(database, os);
 

@@ -26,11 +26,13 @@ public class TypeConverterTest {
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("character"));
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("character varying"));
 
+		// Float
+		assertEquals("Float", typeConverter.convertTypeFromSQLToEntityStore("NUMBER"));
+		assertEquals("Float", typeConverter.convertTypeFromSQLToEntityStore("DECIMAL"));
+
 		// Integer
 		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("INTEGER"));
 		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("INT"));
-		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("NUMBER"));
-		assertEquals("Integer", typeConverter.convertTypeFromSQLToEntityStore("DECIMAL"));
 
 		// Boolean
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOLEAN"));

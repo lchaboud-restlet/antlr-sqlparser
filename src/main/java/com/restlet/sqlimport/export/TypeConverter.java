@@ -10,6 +10,7 @@ import com.restlet.sqlimport.model.Table;
 public class TypeConverter {
 
 	public static final String TYPE_STRING = "String";
+	public static final String TYPE_FLOAT = "Float";
 	public static final String TYPE_INTEGER = "Integer";
 	public static final String TYPE_BOOLEAN = "Boolean";
 
@@ -37,6 +38,9 @@ public class TypeConverter {
 		}
 		if(isString(sqlType)) {
 			return TYPE_STRING;
+		}
+		if(isFloat(sqlType)) {
+			return TYPE_FLOAT;
 		}
 		if(isInteger(sqlType)) {
 			return TYPE_INTEGER;
@@ -74,6 +78,21 @@ public class TypeConverter {
 	}
 
 	/**
+	 * Indicates if the SQL type corresponds to the Float type in the Entity store.
+	 * @param sqlType SQL type
+	 * @return boolean
+	 */
+	public boolean isFloat(final String sqlType) {
+		if("DECIMAL".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
+		if("NUMBER".equalsIgnoreCase(sqlType)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Indicates if the SQL type corresponds to the Integer type in the Entity store.
 	 * @param sqlType SQL type
 	 * @return boolean
@@ -83,12 +102,6 @@ public class TypeConverter {
 			return true;
 		}
 		if("INTEGER".equalsIgnoreCase(sqlType)) {
-			return true;
-		}
-		if("DECIMAL".equalsIgnoreCase(sqlType)) {
-			return true;
-		}
-		if("NUMBER".equalsIgnoreCase(sqlType)) {
 			return true;
 		}
 		return false;

@@ -37,14 +37,11 @@ public class ExportToPivotFormat {
 
 		final JSONStringer jsonStringer = new JSONStringer();
 
-		// Convert SQL types to Entity store types
-		final TypeConverter typeConverter = new TypeConverter();
-		typeConverter.convertTypeFromSQLToEntityStore(database);
-
 		jsonStringer.array();
 		for(final Table table : database.getTables()) {
 			jsonStringer.object();
 			jsonStringer.key("name").value(table.getName());
+			jsonStringer.key("pkPolicy").value("user_generated_value");
 			jsonStringer.key("fields").array();
 			for(final String columnName : table.getColumnByNames().keySet()) {
 				final Column column = table.getColumnByNames().get(columnName);
@@ -54,17 +51,23 @@ public class ExportToPivotFormat {
 				final ForeignKey foreignKey = table.getForeignKeyForColumnNameOrigin(column);
 				if(foreignKey == null) {
 					// converted type
-					jsonStringer.key("type").value(column.getConvertedType());
+					if(column.getConvertedType() != null) {
+						jsonStringer.key("type").value(column.getConvertedType());
+					}
 				} else {
 					// foreign key : type is in the name of the foreign table
 					jsonStringer.key("type").value(foreignKey.getTableNameTarget());
+					// number of occurences for the relation
+					jsonStringer.key("minOccurs").value(0);
+					jsonStringer.key("maxOccurs").value(-1);
 				}
-				jsonStringer.key("minOccurs").value(1);
-				jsonStringer.key("maxOccurs").value(1);
 				if(column.getIsNotNull()) {
 					jsonStringer.key("nullable").value(false);
 				} else {
 					jsonStringer.key("nullable").value(true);
+				}
+				if(column.getDefaultValue() != null) {
+					jsonStringer.key("defaultValue").value(column.getDefaultValue());
 				}
 				jsonStringer.endObject();
 			}
