@@ -59,7 +59,7 @@ public class ExportToPivotFormat {
 					jsonStringer.key("type").value(foreignKey.getTableNameTarget());
 					// number of occurences for the relation
 					jsonStringer.key("minOccurs").value(0);
-					jsonStringer.key("maxOccurs").value(-1);
+					jsonStringer.key("maxOccurs").value("*");
 				}
 				if(column.getIsNotNull()) {
 					jsonStringer.key("nullable").value(false);
