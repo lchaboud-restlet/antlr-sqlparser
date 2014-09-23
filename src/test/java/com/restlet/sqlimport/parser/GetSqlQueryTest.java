@@ -33,9 +33,9 @@ public class GetSqlQueryTest {
 		// Then
 		assertEquals(3, lines.size());
 
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineByQuerys().get(lines.get(0)).getReportStatus());
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineByQuerys().get(lines.get(1)).getReportStatus());
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineByQuerys().get(lines.get(2)).getReportStatus());
+		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(0)).getReportStatus());
+		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(1)).getReportStatus());
+		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(2)).getReportStatus());
 
 	}
 

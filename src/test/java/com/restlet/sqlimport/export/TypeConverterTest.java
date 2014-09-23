@@ -21,11 +21,11 @@ public class TypeConverterTest {
 		assertNull(typeConverter.convertTypeFromSQLToEntityStore(sqlType));
 
 		// unknown
-		assertEquals(0, report.getMessages().size());
+		assertEquals(0, report.getReportLines().size());
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("UNKNOWN"));
-		assertEquals(1, report.getMessages().size());
-		assertEquals(ReportStatus.UNKNOWN_SQL_TYPE, report.getMessages().get(0).getReportStatus());
-		assertEquals("UNKNOWN", report.getMessages().get(0).getMessage());
+		assertEquals(1, report.getReportLines().size());
+		assertEquals(ReportStatus.UNKNOWN_SQL_TYPE, report.getReportLines().get(0).getReportStatus());
+		assertEquals("UNKNOWN", report.getReportLines().get(0).getMessage());
 
 		// String
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("VARCHAR"));
@@ -46,7 +46,7 @@ public class TypeConverterTest {
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOLEAN"));
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOL"));
 
-		assertEquals(1, report.getMessages().size());
+		assertEquals(1, report.getReportLines().size());
 	}
 
 }

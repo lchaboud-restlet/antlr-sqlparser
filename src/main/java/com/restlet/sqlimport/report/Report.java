@@ -1,10 +1,7 @@
 package com.restlet.sqlimport.report;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Report.
@@ -12,29 +9,22 @@ import java.util.Map;
 public class Report {
 
 	/**
-	 * Report lines by query.
+	 * Global status.
 	 */
-	private Map<String, ReportLine> reportLineByQuerys = new HashMap<String, ReportLine>();
+	private ReportStatus reportStatus;
 
 	/**
-	 * Messages not associated to a query.
+	 * Report lines.
 	 */
-	private List<ReportLine> messages = new ArrayList<ReportLine>();
+	private List<ReportLine> reportLines = new ArrayList<ReportLine>();
 
 	/**
 	 * Add report for the query.
 	 * @param reportLine Report line
 	 */
 	public void add(final ReportLine reportLine) {
-		reportLineByQuerys.put(reportLine.getQuery(), reportLine);
-	}
 
-	/**
-	 * Get report lines.
-	 * @return Report lines
-	 */
-	public Collection<ReportLine> getReportLines() {
-		return reportLineByQuerys.values();
+		reportLines.add(reportLine);
 	}
 
 	/**
@@ -55,6 +45,23 @@ public class Report {
 	}
 
 	/**
+	 * Return report line corresponding to a query
+	 * @param query SQL Query
+	 * @return report line
+	 */
+	public ReportLine getReportLineForQuery(final String query) {
+		if(query == null) {
+			return null;
+		}
+		for(final ReportLine reportLine : reportLines) {
+			if(query.equals(reportLine.getQuery())) {
+				return reportLine;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Add message.
 	 * @param reportStatus Status
 	 * @param message Message
@@ -63,23 +70,23 @@ public class Report {
 		final ReportLine reportLine = new ReportLine();
 		reportLine.setReportStatus(reportStatus);
 		reportLine.setMessage(message);
-		messages.add(reportLine);
+		reportLines.add(reportLine);
 	}
 
-	public Map<String, ReportLine> getReportLineByQuerys() {
-		return reportLineByQuerys;
+	public List<ReportLine> getReportLines() {
+		return reportLines;
 	}
 
-	public void setReportLineByQuerys(final Map<String, ReportLine> reportLineByQuerys) {
-		this.reportLineByQuerys = reportLineByQuerys;
+	public void setReportLines(final List<ReportLine> messages) {
+		this.reportLines = messages;
 	}
 
-	public List<ReportLine> getMessages() {
-		return messages;
+	public ReportStatus getReportStatus() {
+		return reportStatus;
 	}
 
-	public void setMessages(final List<ReportLine> messages) {
-		this.messages = messages;
+	public void setReportStatus(final ReportStatus reportStatus) {
+		this.reportStatus = reportStatus;
 	}
 
 }

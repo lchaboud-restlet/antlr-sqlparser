@@ -18,6 +18,15 @@ public enum ReportStatus {
 	PARSING_ERROR,
 
 	/** Unknown SQL type */
-	UNKNOWN_SQL_TYPE
+	UNKNOWN_SQL_TYPE,
+
+	/** More than one column in the primary key */
+	PRIMARY_KEY_MORE_THAN_ONE_COLUMN,
+
+	/** More than one column in the foreign key */
+	FOREIGN_KEY_MORE_THAN_ONE_COLUMN,
+
+	/** Not valid database */
+	NOT_VALID_DATABASE
 
 }

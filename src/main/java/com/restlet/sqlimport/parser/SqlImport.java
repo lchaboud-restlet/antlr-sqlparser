@@ -87,7 +87,7 @@ public class SqlImport {
 				}
 			}
 
-			final ReportLine reportLine = getReport().getReportLineByQuerys().get(query);
+			final ReportLine reportLine = getReport().getReportLineForQuery(query);
 			reportLine.setReportStatus(ReportStatus.PARSING_ERROR);
 			final StringBuffer strBuffer = new StringBuffer();
 			strBuffer.append("=> line ").append(line).append(" : ").append(msg);
@@ -401,7 +401,7 @@ public class SqlImport {
 		p.parse();
 
 		if(!listener.hasError) {
-			final ReportLine reportLine = getReport().getReportLineByQuerys().get(query);
+			final ReportLine reportLine = getReport().getReportLineForQuery(query);
 			reportLine.setReportStatus(ReportStatus.SUCCESS);
 		}
 	}
