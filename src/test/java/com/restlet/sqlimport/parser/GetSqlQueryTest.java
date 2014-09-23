@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.restlet.sqlimport.report.Report;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 import com.restlet.sqlimport.util.Util;
 
 
@@ -26,16 +26,17 @@ public class GetSqlQueryTest {
 		// Given
 		final File file = util.getFileByClassPath("/standard.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
 		assertEquals(3, lines.size());
 
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(0)).getReportStatus());
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(1)).getReportStatus());
-		assertEquals(ReportStatus.TO_PARSE, report.getReportLineForQuery(lines.get(2)).getReportStatus());
+		assertEquals(ReportLineStatus.TO_PARSE, report.getReportLineForQuery(lines.get(0)).getReportLineStatus());
+		assertEquals(ReportLineStatus.TO_PARSE, report.getReportLineForQuery(lines.get(1)).getReportLineStatus());
+		assertEquals(ReportLineStatus.TO_PARSE, report.getReportLineForQuery(lines.get(2)).getReportLineStatus());
 
 	}
 
@@ -44,9 +45,10 @@ public class GetSqlQueryTest {
 		// Given
 		final File file = util.getFileByClassPath("/mysql.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
 		assertEquals(5, lines.size());
@@ -57,9 +59,10 @@ public class GetSqlQueryTest {
 		// Given
 		final File file = util.getFileByClassPath("/postgres.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
 		assertEquals(9, lines.size());
@@ -70,9 +73,10 @@ public class GetSqlQueryTest {
 		// Given
 		final File file = util.getFileByClassPath("/oracle1.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
 		assertEquals(4, lines.size());
@@ -83,9 +87,10 @@ public class GetSqlQueryTest {
 		// Given
 		final File file = util.getFileByClassPath("/oracle2.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final List<String> lines = getSqlQuery.getSqlQuerys(in);
+		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
 		assertEquals(3, lines.size());

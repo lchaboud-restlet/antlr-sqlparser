@@ -16,7 +16,7 @@ public class ReportLine {
 	/**
 	 * Status.
 	 */
-	private ReportStatus reportStatus;
+	private ReportLineStatus reportLineStatus;
 
 	public String getMessage() {
 		return message;
@@ -30,11 +30,11 @@ public class ReportLine {
 	public void setQuery(final String query) {
 		this.query = query;
 	}
-	public ReportStatus getReportStatus() {
-		return reportStatus;
+	public ReportLineStatus getReportLineStatus() {
+		return reportLineStatus;
 	}
-	public void setReportStatus(final ReportStatus reportStatus) {
-		this.reportStatus = reportStatus;
+	public void setReportLineStatus(final ReportLineStatus reportStatus) {
+		this.reportLineStatus = reportStatus;
 	}
 
 }

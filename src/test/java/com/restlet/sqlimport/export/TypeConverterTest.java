@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 import com.restlet.sqlimport.report.Report;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 
 
 public class TypeConverterTest {
@@ -24,7 +24,7 @@ public class TypeConverterTest {
 		assertEquals(0, report.getReportLines().size());
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("UNKNOWN"));
 		assertEquals(1, report.getReportLines().size());
-		assertEquals(ReportStatus.UNKNOWN_SQL_TYPE, report.getReportLines().get(0).getReportStatus());
+		assertEquals(ReportLineStatus.UNKNOWN_SQL_TYPE, report.getReportLines().get(0).getReportLineStatus());
 		assertEquals("UNKNOWN", report.getReportLines().get(0).getMessage());
 
 		// String

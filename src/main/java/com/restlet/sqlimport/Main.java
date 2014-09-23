@@ -5,15 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.restlet.sqlimport.export.ExportToPivotFormat;
-import com.restlet.sqlimport.export.TypeConverter;
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.parser.SqlImport;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
-import com.restlet.sqlimport.report.ReportStatus;
 import com.restlet.sqlimport.util.Util;
-import com.restlet.sqlimport.validation.DatabaseValidator;
 
 /**
  * Main class to parse SQL file and export to a file in the pivot format.
@@ -41,28 +35,13 @@ public class Main {
 			in = util.getInputStream(input);
 			os = util.getOutputStream(output);
 
-			final Report report = new Report();
+			final MainProcess mainProcess = new MainProcess();
 
-			// Load SQL file, filter and parse SQL queries
-			final SqlImport sqlImport = new SqlImport(report);
-			final Database database = sqlImport.read(in);
+			final String inputContent = util.read(in);
+			final String outputContent = mainProcess.process(inputContent);
+			util.write(outputContent, os);
 
-			// Convert SQL types to Entity store types
-			final TypeConverter typeConverter = new TypeConverter(report);
-			typeConverter.convertTypeFromSQLToEntityStore(database);
-
-			// Database schema validator
-			final DatabaseValidator databaseValidator = new DatabaseValidator(report);
-			final boolean isValidDatabase = databaseValidator.validateDatabase(database);
-
-			if(!isValidDatabase) {
-				report.setReportStatus(ReportStatus.NOT_SUPPORTED_DATABASE);
-			} else {
-				// Export
-				final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
-				final String content = sqlExport.getLines(database);
-				util.write(content, os);
-			}
+			final Report report = mainProcess.getReport();
 
 			if(report.getReportStatus() != null) {
 				System.out.println("Import status : "+report.getReportStatus());
@@ -71,7 +50,7 @@ public class Main {
 			for(final ReportLine reportLine : report.getReportLines()) {
 				System.out.println("---");
 				System.out.println("Query : \n"+reportLine.getQuery());
-				System.out.println("=> Status : " + reportLine.getReportStatus());
+				System.out.println("=> Status : " + reportLine.getReportLineStatus());
 				if(reportLine.getMessage() != null) {
 					System.out.println(reportLine.getMessage());
 				}

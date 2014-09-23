@@ -5,7 +5,7 @@ import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 
 /**
  * Validate database
@@ -52,7 +52,7 @@ public class DatabaseValidator {
 		if(table.getPrimaryKey().getColumnNames().size() > 1) {
 			final ReportLine reportLine = new ReportLine();
 			report.add(reportLine);
-			reportLine.setReportStatus(ReportStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN);
+			reportLine.setReportLineStatus(ReportLineStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN);
 			reportLine.setMessage(table.getName());
 			isValid = false;
 		}
@@ -62,7 +62,7 @@ public class DatabaseValidator {
 			if((foreignKey.getColumnNameOrigins().size() > 1) || (foreignKey.getColumnNameTargets().size() > 1)) {
 				final ReportLine reportLine = new ReportLine();
 				report.add(reportLine);
-				reportLine.setReportStatus(ReportStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN);
+				reportLine.setReportLineStatus(ReportLineStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN);
 				reportLine.setMessage(table.getName());
 				isValid = false;
 			}

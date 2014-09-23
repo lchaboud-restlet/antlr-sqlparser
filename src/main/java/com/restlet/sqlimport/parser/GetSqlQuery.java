@@ -1,13 +1,11 @@
 package com.restlet.sqlimport.parser;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
-import com.restlet.sqlimport.report.ReportStatus;
-import com.restlet.sqlimport.util.Util;
+import com.restlet.sqlimport.report.ReportLineStatus;
 
 /**
  * Parse SQL file and returns the list of SQL queries.
@@ -49,24 +47,6 @@ public class GetSqlQuery {
 	}
 
 	/**
-	 * Return the list of SQL queries to parse
-	 * @param is input stream
-	 * @return SQL queries
-	 */
-	public List<String> getSqlQuerys(final InputStream is) {
-		if(is == null) {
-			return null;
-		}
-
-		final Util util = new Util();
-		final String content = util.read(is);
-
-		final List<String> querys = getSqlQuerys(content);
-
-		return querys;
-	}
-
-	/**
 	 * Return the liste of SQL queries to parse
 	 * @param content SQL file content
 	 * @return SQL queries
@@ -88,9 +68,9 @@ public class GetSqlQuery {
 			final ReportLine reportLine = new ReportLine();
 			reportLine.setQuery(query);
 			if(isFiltered) {
-				reportLine.setReportStatus(ReportStatus.FILTERED);
+				reportLine.setReportLineStatus(ReportLineStatus.FILTERED);
 			} else {
-				reportLine.setReportStatus(ReportStatus.TO_PARSE);
+				reportLine.setReportLineStatus(ReportLineStatus.TO_PARSE);
 			}
 			getReport().add(reportLine);
 

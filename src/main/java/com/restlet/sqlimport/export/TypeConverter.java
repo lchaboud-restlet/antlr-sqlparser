@@ -4,7 +4,7 @@ import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.report.Report;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 
 /**
  * Conversion of types from SQL to Entity store
@@ -60,7 +60,7 @@ public class TypeConverter {
 		if(isBoolean(sqlType)) {
 			return TYPE_BOOLEAN;
 		}
-		report.addMessage(ReportStatus.UNKNOWN_SQL_TYPE, sqlType);
+		report.addMessage(ReportLineStatus.UNKNOWN_SQL_TYPE, sqlType);
 		return TYPE_STRING;
 	}
 

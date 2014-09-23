@@ -32,11 +32,11 @@ public class Report {
 	 * @param reportStatus Report status
 	 * @return Number of report lines
 	 */
-	public List<ReportLine> getReportLinesForStatus(final ReportStatus reportStatus) {
+	public List<ReportLine> getReportLinesForStatus(final ReportLineStatus reportLineStatus) {
 		final List<ReportLine> reportLines = new ArrayList<ReportLine>();
 
 		for(final ReportLine reportLine : getReportLines()) {
-			if(reportLine.getReportStatus() == reportStatus) {
+			if(reportLine.getReportLineStatus() == reportLineStatus) {
 				reportLines.add(reportLine);
 			}
 		}
@@ -66,9 +66,9 @@ public class Report {
 	 * @param reportStatus Status
 	 * @param message Message
 	 */
-	public void addMessage(final ReportStatus reportStatus, final String message) {
+	public void addMessage(final ReportLineStatus reportLineStatus, final String message) {
 		final ReportLine reportLine = new ReportLine();
-		reportLine.setReportStatus(reportStatus);
+		reportLine.setReportLineStatus(reportLineStatus);
 		reportLine.setMessage(message);
 		reportLines.add(reportLine);
 	}

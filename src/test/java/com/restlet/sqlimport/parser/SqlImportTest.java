@@ -3,7 +3,6 @@ package com.restlet.sqlimport.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +18,7 @@ import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.report.Report;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -31,58 +30,24 @@ public class SqlImportTest {
 	private SqlImport sqlImport = new SqlImport(report);
 	private Util util = new Util();
 
-	// @Test
-	public void testRead_nofile() {
-
-		final InputStream is = null;
+	@Test
+	public void testGetDatabase_nofile() {
 
 		// When
-		final Database database = sqlImport.read(is);
+		final Database database = sqlImport.getDatabase(null);
 
 		assertNull(database);
 	}
 
-	// @Test
-	public void testRead_file() throws FileNotFoundException {
-		// Given
-		final File file = util.getFileByClassPath("/test.txt");
-		final InputStream in = new FileInputStream(file);
-
-		// When
-		final String content = util.read(in);
-
-		assertEquals("Ligne 1\nLigne 2", content);
-	}
-
-	// @Test
-	public void testRead_import1() throws FileNotFoundException {
-		// Given
-		final File file = util.getFileByClassPath("/import1.sql");
-		final InputStream in = new FileInputStream(file);
-
-		// When
-		final Database database = sqlImport.read(in);
-
-		assertEquals(2, database.getTables().size());
-		final Table table1 = database.getTables().get(0);
-		assertEquals("films", table1.getName());
-		assertEquals(6, table1.getColumnByNames().keySet().size());
-		final Table col2 = database.getTables().get(1);
-		assertEquals("distributors", col2.getName());
-		assertEquals(2, col2.getColumnByNames().keySet().size());
-		assertNotNull(col2.getColumnByNames().get("did"));
-		final Column column = col2.getColumnByNames().get("did");
-		assertEquals("did",column.getName());
-	}
-
 	@Test
-	public void testRead_standard() throws FileNotFoundException {
+	public void testGetDatabase_standard() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/standard.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final Database database = sqlImport.read(in);
+		final Database database = sqlImport.getDatabase(sqlContent);
 
 		// Database schema
 		assertEquals(3, database.getTables().size());
@@ -177,18 +142,19 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_mysql() throws FileNotFoundException {
+	public void testGetDatabase_mysql() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/mysql.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final Database database = sqlImport.read(in);
+		final Database database = sqlImport.getDatabase(sqlContent);
 
 		assertEquals(5, database.getTables().size());
 
-		assertEquals(0, report.getReportLinesForStatus(ReportStatus.PARSING_ERROR).size());
-		assertEquals(5, report.getReportLinesForStatus(ReportStatus.SUCCESS).size());
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(5, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(5, database.getTables().size());
@@ -247,18 +213,19 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_postgres() throws FileNotFoundException {
+	public void testGetDatabase_postgres() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/postgres.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final Database database = sqlImport.read(in);
+		final Database database = sqlImport.getDatabase(sqlContent);
 
 		assertEquals(9, database.getTables().size());
 
-		assertEquals(0, report.getReportLinesForStatus(ReportStatus.PARSING_ERROR).size());
-		assertEquals(9, report.getReportLinesForStatus(ReportStatus.SUCCESS).size());
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(9, database.getTables().size());
@@ -428,18 +395,19 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_oracle1() throws FileNotFoundException {
+	public void testGetDatabase_oracle1() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/oracle1.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final Database database = sqlImport.read(in);
+		final Database database = sqlImport.getDatabase(sqlContent);
 
 		assertEquals(4, database.getTables().size());
 
-		assertEquals(0, report.getReportLinesForStatus(ReportStatus.PARSING_ERROR).size());
-		assertEquals(4, report.getReportLinesForStatus(ReportStatus.SUCCESS).size());
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(4, database.getTables().size());
@@ -490,18 +458,19 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testRead_oracle2() throws FileNotFoundException {
+	public void testGetDatabase_oracle2() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/oracle2.sql");
 		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
 
 		// When
-		final Database database = sqlImport.read(in);
+		final Database database = sqlImport.getDatabase(sqlContent);
 
 		assertEquals(3, database.getTables().size());
 
-		assertEquals(0, report.getReportLinesForStatus(ReportStatus.PARSING_ERROR).size());
-		assertEquals(3, report.getReportLinesForStatus(ReportStatus.SUCCESS).size());
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(3, database.getTables().size());

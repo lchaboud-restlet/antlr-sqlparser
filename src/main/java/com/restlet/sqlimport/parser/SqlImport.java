@@ -1,7 +1,6 @@
 package com.restlet.sqlimport.parser;
 
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -33,7 +32,7 @@ import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
-import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.report.ReportLineStatus;
 import com.restlet.sqlimport.util.Util;
 
 public class SqlImport {
@@ -88,7 +87,7 @@ public class SqlImport {
 			}
 
 			final ReportLine reportLine = getReport().getReportLineForQuery(query);
-			reportLine.setReportStatus(ReportStatus.PARSING_ERROR);
+			reportLine.setReportLineStatus(ReportLineStatus.PARSING_ERROR);
 			final StringBuffer strBuffer = new StringBuffer();
 			strBuffer.append("=> line ").append(line).append(" : ").append(msg);
 			if(e != null) {
@@ -106,16 +105,17 @@ public class SqlImport {
 	/**
 	 * Read input stream to get database schema.
 	 * 
-	 * @param is input stream
+	 * @param content SQL file content
 	 * @return Database schema
 	 */
-	public Database read(final InputStream is) {
-		if(is == null) {
+	public Database getDatabase(final String content) {
+		if(content == null) {
 			return null;
 		}
 
 		final GetSqlQuery getSqlQuery = new GetSqlQuery(getReport());
-		final List<String> querys = getSqlQuery.getSqlQuerys(is);
+		final List<String> querys = getSqlQuery.getSqlQuerys(content);
+
 		final Database database = read(querys);
 
 		return database;
@@ -402,7 +402,7 @@ public class SqlImport {
 
 		if(!listener.hasError) {
 			final ReportLine reportLine = getReport().getReportLineForQuery(query);
-			reportLine.setReportStatus(ReportStatus.SUCCESS);
+			reportLine.setReportLineStatus(ReportLineStatus.SUCCESS);
 		}
 	}
 
