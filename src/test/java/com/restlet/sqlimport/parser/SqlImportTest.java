@@ -116,6 +116,13 @@ public class SqlImportTest {
 		assertEquals("INTEGER", t1_num.getType());
 		assertEquals("INTEGER", t1_id_table2.getType());
 		assertEquals("INTEGER", t1_id_table3.getType());
+		// default value
+		assertEquals(null, t1_id.getDefaultValue());
+		assertEquals(null, t1_nom.getDefaultValue());
+		assertEquals(null, t1_dt.getDefaultValue());
+		assertEquals("1", t1_num.getDefaultValue());
+		assertEquals(null, t1_id_table2.getDefaultValue());
+		assertEquals(null, t1_id_table3.getDefaultValue());
 		// primary key
 		assertEquals(1, table1.getPrimaryKey().getColumnNames().size());
 		assertEquals("id", table1.getPrimaryKey().getColumnNames().get(0));

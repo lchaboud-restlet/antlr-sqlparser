@@ -25,6 +25,10 @@ public class Column {
 	 * Converted type.
 	 */
 	private String convertedType;
+	/**
+	 * Default value.
+	 */
+	private String defaultValue;
 
 	public String getName() {
 		return name;
@@ -64,6 +68,14 @@ public class Column {
 
 	public void setConvertedType(final String convertedType) {
 		this.convertedType = convertedType;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(final String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
 }

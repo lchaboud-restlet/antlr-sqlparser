@@ -282,7 +282,7 @@ column_constraint
    | column_constraint_null
    | K_UNIQUE conflict_clause
    | K_CHECK '(' expr ')'
-   | K_DEFAULT (signed_number | literal_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )
+   | column_default
    | K_COLLATE collation_name
    )
  ;
@@ -301,6 +301,14 @@ column_constraint_not_null
 
 column_constraint_null
  : K_NULL conflict_clause
+ ;
+
+column_default
+ : K_DEFAULT (column_default_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )
+ ;
+
+column_default_value
+ : ( signed_number | literal_value )
  ;
 
 conflict_clause

@@ -18,6 +18,7 @@ import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_defContext;
+import com.restlet.sqlimport.parser.SqlParser.Column_default_valueContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Create_table_stmtContext;
 import com.restlet.sqlimport.parser.SqlParser.Fk_origin_column_nameContext;
@@ -282,6 +283,15 @@ public class SqlImport {
 			}
 
 			//--- Constraints
+
+			//--- Default
+
+			@Override
+			public void exitColumn_default_value(final Column_default_valueContext ctx) {
+				if(inCreateTable && inColumnDef) {
+					column.setDefaultValue(util.unformatSqlName(ctx.getText()));
+				}
+			}
 
 			//--- Not Null
 

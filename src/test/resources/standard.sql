@@ -2,7 +2,7 @@
 CREATE TABLE table3
 (
     id INTEGER PRIMARY KEY NOT NULL,
-    nom VARCHAR(100)
+    nom VARCHAR(100) 
 );
 
 CREATE TABLE table2
@@ -18,7 +18,7 @@ CREATE TABLE table1
     id INTEGER PRIMARY KEY NOT NULL,
     nom VARCHAR(100),
     dt DATE NOT NULL,
-    num INTEGER,
+    num INTEGER DEFAULT 1,
 	id_table2 INTEGER REFERENCES table2(id),
 	id_table3 INTEGER,
 	FOREIGN KEY(id_table3)
