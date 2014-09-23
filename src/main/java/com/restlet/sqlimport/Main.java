@@ -56,7 +56,7 @@ public class Main {
 			final boolean isValidDatabase = databaseValidator.validateDatabase(database);
 
 			if(!isValidDatabase) {
-				report.setReportStatus(ReportStatus.NOT_VALID_DATABASE);
+				report.setReportStatus(ReportStatus.NOT_SUPPORTED_DATABASE);
 			} else {
 				// Export
 				final ExportToPivotFormat sqlExport = new ExportToPivotFormat();

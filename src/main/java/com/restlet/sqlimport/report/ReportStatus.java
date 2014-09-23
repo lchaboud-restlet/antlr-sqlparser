@@ -27,6 +27,6 @@ public enum ReportStatus {
 	FOREIGN_KEY_MORE_THAN_ONE_COLUMN,
 
 	/** Not valid database */
-	NOT_VALID_DATABASE
+	NOT_SUPPORTED_DATABASE
 
 }
