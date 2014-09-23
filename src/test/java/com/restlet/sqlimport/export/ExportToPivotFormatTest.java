@@ -174,7 +174,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getLines(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":-1,\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 }

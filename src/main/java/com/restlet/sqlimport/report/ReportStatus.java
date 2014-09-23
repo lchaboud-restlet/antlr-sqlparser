@@ -15,6 +15,9 @@ public enum ReportStatus {
 	TO_PARSE,
 
 	/** Error during parsing */
-	PARSING_ERROR
+	PARSING_ERROR,
+
+	/** Unknown SQL type */
+	UNKNOWN_SQL_TYPE
 
 }

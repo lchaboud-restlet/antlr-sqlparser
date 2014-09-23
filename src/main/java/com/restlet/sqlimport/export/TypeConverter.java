@@ -3,6 +3,8 @@ package com.restlet.sqlimport.export;
 import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportStatus;
 
 /**
  * Conversion of types from SQL to Entity store
@@ -13,6 +15,16 @@ public class TypeConverter {
 	public static final String TYPE_FLOAT = "Float";
 	public static final String TYPE_INTEGER = "Integer";
 	public static final String TYPE_BOOLEAN = "Boolean";
+
+	private final Report report;
+
+	/**
+	 * Constructor.
+	 * @param report Report (must not be null)
+	 */
+	public TypeConverter(final Report report) {
+		this.report = report;
+	}
 
 	/**
 	 * Convert SQL type to Entity store type for all columns of the database.
@@ -48,8 +60,7 @@ public class TypeConverter {
 		if(isBoolean(sqlType)) {
 			return TYPE_BOOLEAN;
 		}
-		// throw new RuntimeException("unsupported type : "+sqlType);
-		System.out.println("Unsupported type : "+sqlType);
+		report.addMessage(ReportStatus.UNKNOWN_SQL_TYPE, sqlType);
 		return TYPE_STRING;
 	}
 

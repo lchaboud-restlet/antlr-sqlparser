@@ -8,7 +8,7 @@ public class ReportLine {
 	/**
 	 * Message to display.
 	 */
-	private String msg;
+	private String message;
 	/**
 	 * Query.
 	 */
@@ -18,11 +18,11 @@ public class ReportLine {
 	 */
 	private ReportStatus reportStatus;
 
-	public String getMsg() {
-		return msg;
+	public String getMessage() {
+		return message;
 	}
-	public void setMsg(final String msg) {
-		this.msg = msg;
+	public void setMessage(final String message) {
+		this.message = message;
 	}
 	public String getQuery() {
 		return query;

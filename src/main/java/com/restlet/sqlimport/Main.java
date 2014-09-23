@@ -46,7 +46,7 @@ public class Main {
 			final Database database = sqlImport.read(in);
 
 			// Convert SQL types to Entity store types
-			final TypeConverter typeConverter = new TypeConverter();
+			final TypeConverter typeConverter = new TypeConverter(report);
 			typeConverter.convertTypeFromSQLToEntityStore(database);
 
 			// Export
@@ -57,8 +57,8 @@ public class Main {
 				System.out.println("---");
 				System.out.println("Query : \n"+reportLine.getQuery());
 				System.out.println("=> Status : " + reportLine.getReportStatus());
-				if(reportLine.getMsg() != null) {
-					System.out.println(reportLine.getMsg());
+				if(reportLine.getMessage() != null) {
+					System.out.println(reportLine.getMessage());
 				}
 				System.out.println("");
 			}

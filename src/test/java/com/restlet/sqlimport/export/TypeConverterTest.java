@@ -5,19 +5,27 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportStatus;
+
 
 public class TypeConverterTest {
 
 	@Test
 	public void testConvertTypeFromSQLToEntityStore() {
-		final TypeConverter typeConverter = new TypeConverter();
+		final Report report = new Report();
+		final TypeConverter typeConverter = new TypeConverter(report);
 
 		// null
 		final String sqlType = null;
 		assertNull(typeConverter.convertTypeFromSQLToEntityStore(sqlType));
 
 		// unknown
-		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("UNKOWN"));
+		assertEquals(0, report.getMessages().size());
+		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("UNKNOWN"));
+		assertEquals(1, report.getMessages().size());
+		assertEquals(ReportStatus.UNKNOWN_SQL_TYPE, report.getMessages().get(0).getReportStatus());
+		assertEquals("UNKNOWN", report.getMessages().get(0).getMessage());
 
 		// String
 		assertEquals("String", typeConverter.convertTypeFromSQLToEntityStore("VARCHAR"));
@@ -37,6 +45,8 @@ public class TypeConverterTest {
 		// Boolean
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOLEAN"));
 		assertEquals("Boolean", typeConverter.convertTypeFromSQLToEntityStore("BOOL"));
+
+		assertEquals(1, report.getMessages().size());
 	}
 
 }

@@ -99,7 +99,7 @@ public class SqlImport {
 					strBuffer.append("Context : "+e.getCtx());
 				}
 			}
-			reportLine.setMsg(strBuffer.toString());
+			reportLine.setMessage(strBuffer.toString());
 		}
 	}
 
