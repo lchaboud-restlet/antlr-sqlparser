@@ -4,8 +4,6 @@ import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
-import com.restlet.sqlimport.parser.SqlParser.Alter_table_add_constraintContext;
-import com.restlet.sqlimport.parser.SqlParser.Alter_table_stmtContext;
 import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyContext;
@@ -19,31 +17,46 @@ import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
 import com.restlet.sqlimport.parser.SqlParser.Indexed_columnContext;
 import com.restlet.sqlimport.parser.SqlParser.NameContext;
-import com.restlet.sqlimport.parser.SqlParser.Source_table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
 import com.restlet.sqlimport.util.Util;
 
+/**
+ * Parse Listener only for CREATE TABLE statements parsing.
+ */
 public class CreateTableParseListener extends SqlBaseListener {
 
+	/**
+	 * Debug mode to display ANTLR v4 contexts.
+	 */
 	private static boolean DEBUG = false;
 
+	/**
+	 * ANTLR Parser
+	 */
 	private final SqlParser sqlParser;
 
+	/**
+	 * Database schema
+	 */
 	private final Database database;
 
-	Table table;
-	Column column;
-	ForeignKey foreignKey;
+	private Table table;
+	private Column column;
+	private ForeignKey foreignKey;
 
-	boolean inCreateTable = false; // CREATE TABLE
-	boolean inColumnDef = false; // Column definition
-	boolean inTypeName = false; // Column type in the column definition
-	boolean inTable_constraint_primary_key = false; // PRIMARY KEY
-	boolean inTable_constraint_foreign_key = false; // FOREIGN KEY
+	/** Positions */
+	private boolean inCreateTable = false; // CREATE TABLE
+	private boolean inColumnDef = false; // Column definition
+	private boolean inTypeName = false; // Column type in the column definition
+	private boolean inTable_constraint_primary_key = false; // PRIMARY KEY
+	private boolean inTable_constraint_foreign_key = false; // FOREIGN KEY
 
+	/**
+	 * Utils methods.
+	 */
 	Util util = new Util();
 
 	/**

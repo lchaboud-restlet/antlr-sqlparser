@@ -81,9 +81,10 @@ sql_stmt
 alter_table_stmt
  : K_ALTER K_TABLE ( database_name '.' )? source_table_name
    ( K_RENAME K_TO new_table_name
-   | K_ADD K_COLUMN? column_def
    | alter_table_add_constraint
+   | K_ADD K_COLUMN? column_def
    )
+   K_ENABLE?
  ;
 
 alter_table_add_constraint
@@ -380,7 +381,7 @@ foreign_key_clause
      | K_MATCH name
      ) 
    )*
-   ( K_NOT? K_DEFERRABLE ( K_INITIALLY K_DEFERRED | K_INITIALLY K_IMMEDIATE )? )?
+   ( K_NOT? K_DEFERRABLE ( K_INITIALLY K_DEFERRED | K_INITIALLY K_IMMEDIATE )? K_ENABLE? )?
  ;
 
 fk_target_column_name
@@ -406,12 +407,12 @@ table_constraint
    )
  ;
 
-table_constraint_foreign_key
- : K_FOREIGN K_KEY '(' fk_origin_column_name ( ',' fk_origin_column_name )* ')' foreign_key_clause
- ;
-
 table_constraint_primary_key
  : K_PRIMARY K_KEY '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
+ ;
+
+table_constraint_foreign_key
+ : K_FOREIGN K_KEY '(' fk_origin_column_name ( ',' fk_origin_column_name )* ')' foreign_key_clause
  ;
 
 table_constraint_unique
@@ -572,6 +573,7 @@ keyword
  | K_EACH
  | K_ELSE
  | K_END
+ | K_ENABLE
  | K_ESCAPE
  | K_EXCEPT
  | K_EXCLUSIVE
@@ -811,6 +813,7 @@ K_DROP : D R O P;
 K_EACH : E A C H;
 K_ELSE : E L S E;
 K_END : E N D;
+K_ENABLE : E N A B L E;
 K_ESCAPE : E S C A P E;
 K_EXCEPT : E X C E P T;
 K_EXCLUSIVE : E X C L U S I V E;

@@ -9,7 +9,6 @@ import com.restlet.sqlimport.parser.SqlParser.Alter_table_stmtContext;
 import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Fk_origin_column_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Fk_target_column_nameContext;
-import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
 import com.restlet.sqlimport.parser.SqlParser.Indexed_columnContext;
 import com.restlet.sqlimport.parser.SqlParser.Source_table_nameContext;
@@ -17,12 +16,25 @@ import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContex
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_primary_keyContext;
 import com.restlet.sqlimport.util.Util;
 
+/**
+ * Parse Listener only for ALTER TABLE statements parsing.
+ */
 public class AlterTableParseListener extends SqlBaseListener {
 
+
+	/**
+	 * Debug mode to display ANTLR v4 contexts.
+	 */
 	private static boolean DEBUG = false;
 
+	/**
+	 * ANTLR Parser
+	 */
 	private final SqlParser sqlParser;
 
+	/**
+	 * Database schema
+	 */
 	private final Database database;
 
 	Table table;
@@ -31,12 +43,13 @@ public class AlterTableParseListener extends SqlBaseListener {
 
 	boolean inAlter_table_stmt = false; // ALTER TABLE
 	boolean inAlter_table_add_constraint = false; // ALTER TABLE with ADD CONSTRAINT
-	boolean inTable_constraint_primary_key = false; // PRIMARY KEY in CREATE TABLE
-	boolean inTable_constraint_foreign_key = false; // FOREIGN KEY
-	boolean inForeign_key_clause = false;
+	boolean inTable_constraint_primary_key = false; // PRIMARY KEY in ALTER TABLE
+	boolean inTable_constraint_foreign_key = false; // FOREIGN KEY in ALTER TABLE
 
+	/**
+	 * Utils methods.
+	 */
 	Util util = new Util();
-
 
 	/**
 	 * Constructor.
@@ -139,27 +152,8 @@ public class AlterTableParseListener extends SqlBaseListener {
 	}
 
 	@Override
-	public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
-		inForeign_key_clause  = true;
-		if(inAlter_table_stmt && !inTable_constraint_foreign_key) {
-			foreignKey = new ForeignKey();
-			foreignKey.setTableNameOrigin(table.getName());
-		}
-	}
-
-	@Override
-	public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
-		if(inAlter_table_stmt && !inTable_constraint_foreign_key) {
-			foreignKey.setTableNameOrigin(table.getName());
-			table.getForeignKeys().add(foreignKey);
-			foreignKey = null;
-		}
-		inForeign_key_clause = false;
-	}
-
-	@Override
 	public void exitForeign_table(final Foreign_tableContext ctx) {
-		if(inTable_constraint_foreign_key || inForeign_key_clause) {
+		if(inTable_constraint_foreign_key) {
 			foreignKey.setTableNameTarget(util.unformatSqlName(ctx.getText()));
 		}
 	}
@@ -167,7 +161,7 @@ public class AlterTableParseListener extends SqlBaseListener {
 	@Override
 	public void exitFk_origin_column_name(
 			final Fk_origin_column_nameContext ctx) {
-		if(inTable_constraint_foreign_key || inForeign_key_clause) {
+		if(inTable_constraint_foreign_key) {
 			foreignKey.getColumnNameOrigins().add(util.unformatSqlName(ctx.getText()));
 		}
 	}
@@ -175,7 +169,7 @@ public class AlterTableParseListener extends SqlBaseListener {
 	@Override
 	public void exitFk_target_column_name(
 			final Fk_target_column_nameContext ctx) {
-		if(inTable_constraint_foreign_key || inForeign_key_clause) {
+		if(inTable_constraint_foreign_key) {
 			foreignKey.getColumnNameTargets().add(util.unformatSqlName(ctx.getText()));
 		}
 	}
