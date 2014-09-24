@@ -17,11 +17,6 @@ import com.restlet.sqlimport.report.ReportLineStatus;
 public class SqlImport {
 
 	/**
-	 * Debug : display context information during ANTLR v4 parsing.
-	 */
-	public static final boolean DEBUG = false;
-
-	/**
 	 * Log activated.
 	 */
 	public static final boolean LOG_ACTIVATED = true;
