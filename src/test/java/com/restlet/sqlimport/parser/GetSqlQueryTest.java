@@ -32,7 +32,7 @@ public class GetSqlQueryTest {
 		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
-		assertEquals(3, lines.size());
+		assertEquals(4, lines.size());
 
 		assertEquals(ReportLineStatus.TO_PARSE, report.getReportLineForQuery(lines.get(0)).getReportLineStatus());
 		assertEquals(ReportLineStatus.TO_PARSE, report.getReportLineForQuery(lines.get(1)).getReportLineStatus());
@@ -51,7 +51,7 @@ public class GetSqlQueryTest {
 		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
-		assertEquals(5, lines.size());
+		assertEquals(6, lines.size());
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class GetSqlQueryTest {
 		final List<String> lines = getSqlQuery.getSqlQuerys(sqlContent);
 
 		// Then
-		assertEquals(4, lines.size());
+		assertEquals(10, lines.size());
 	}
 
 	@Test

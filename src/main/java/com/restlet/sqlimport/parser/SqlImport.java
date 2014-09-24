@@ -136,8 +136,20 @@ public class SqlImport {
 		listener.query = query;
 		p.addErrorListener(listener);
 
+		if(LOG_ACTIVATED) {
+			System.out.println("Parse the query : \n"+query);
+		}
+
 		// Fill database schema from SQL input stream read by ANTLR
-		p.addParseListener(new CreateTableParseListener(p, database));
+		if(query.toUpperCase().indexOf("CREATE TABLE") == 0) {
+			p.addParseListener(new CreateTableParseListener(p, database));
+		}
+		else if(query.toUpperCase().indexOf("ALTER TABLE") == 0) {
+			p.addParseListener(new AlterTableParseListener(p, database));
+		}
+		else {
+			throw new RuntimeException("No parse listener for the query : "+query);
+		}
 
 		p.parse();
 

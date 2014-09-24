@@ -500,8 +500,8 @@ public class SqlImportTest {
 		assertEquals("NUMBER", t2_MT_MONTH.getType());
 		assertEquals("NUMBER", t2_NB_DURATION_MONTH.getType());
 		// primary key
-		assertEquals(1, contract.getPrimaryKey().getColumnNames().size());
-		assertEquals("ID_CONTRACT", contract.getPrimaryKey().getColumnNames().get(0));
+		//assertEquals(1, contract.getPrimaryKey().getColumnNames().size());
+		//assertEquals("ID_CONTRACT", contract.getPrimaryKey().getColumnNames().get(0));
 		// not null
 		assertFalse(t2_ID_CONTRACT.getIsNotNull());
 		assertFalse(t2_NB_DURATION_IN_MONTHS.getIsNotNull());

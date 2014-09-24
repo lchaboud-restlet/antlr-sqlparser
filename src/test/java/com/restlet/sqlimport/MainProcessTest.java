@@ -49,8 +49,8 @@ public class MainProcessTest {
 
 		// Then
 		final Report report = mainProcess.getReport();
-		assertEquals(ReportStatus.PIVOT_FILE_GENERATED, report.getReportStatus());
-		assertNotNull(out);
+		assertEquals(ReportStatus.NOT_SUPPORTED_DATABASE, report.getReportStatus());
+		assertNull(out);
 	}
 
 	@Test
@@ -65,11 +65,11 @@ public class MainProcessTest {
 
 		final Report report = mainProcess.getReport();
 
-		assertEquals(ReportStatus.PIVOT_FILE_GENERATED, report.getReportStatus());
+		assertEquals(ReportStatus.NOT_SUPPORTED_DATABASE, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(5, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
-		assertNotNull(out);
+		assertNull(out);
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class MainProcessTest {
 
 		assertEquals(ReportStatus.PIVOT_FILE_GENERATED, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		assertNotNull(out);
 	}

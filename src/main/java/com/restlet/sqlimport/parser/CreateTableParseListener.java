@@ -39,11 +39,9 @@ public class CreateTableParseListener extends SqlBaseListener {
 	ForeignKey foreignKey;
 
 	boolean inCreateTable = false; // CREATE TABLE
-	boolean inColumnDef = false; // Column definition in CREATE TABLE
-	boolean inTypeName = false; // Column type in the column definition in CREATE TABLE
-	boolean inTable_constraint_primary_key = false; // PRIMARY KEY in CREATE TABLE
-	boolean inAlter_table_stmt = false; // ALTER TABLE
-	boolean inAlter_table_add_constraint = false; // ALTER TABLE with ADD CONSTRAINT
+	boolean inColumnDef = false; // Column definition
+	boolean inTypeName = false; // Column type in the column definition
+	boolean inTable_constraint_primary_key = false; // PRIMARY KEY
 	boolean inTable_constraint_foreign_key = false; // FOREIGN KEY
 
 	Util util = new Util();
@@ -169,39 +167,6 @@ public class CreateTableParseListener extends SqlBaseListener {
 		}
 	}
 
-	//--- ALTER TABLE
-
-	@Override
-	public void enterAlter_table_stmt(final Alter_table_stmtContext ctx) {
-		inAlter_table_stmt = true;
-	}
-
-	@Override
-	public void exitAlter_table_stmt(final Alter_table_stmtContext ctx) {
-		inAlter_table_stmt = false;
-	}
-
-	@Override
-	public void exitSource_table_name(final Source_table_nameContext ctx) {
-		if(inAlter_table_stmt) {
-			table = database.getTableForName(util.unformatSqlName(ctx.getText()));
-		}
-	}
-
-	//--- Add constraint
-
-	@Override
-	public void enterAlter_table_add_constraint(
-			final Alter_table_add_constraintContext ctx) {
-		inAlter_table_add_constraint = true;
-	}
-
-	@Override
-	public void exitAlter_table_add_constraint(
-			final Alter_table_add_constraintContext ctx) {
-		inAlter_table_add_constraint = false;
-	}
-
 	//--- Constraints
 
 	//--- Default
@@ -249,7 +214,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 
 	@Override
 	public void exitIndexed_column(final Indexed_columnContext ctx) {
-		if((inCreateTable || inAlter_table_stmt) && inTable_constraint_primary_key) {
+		if(inCreateTable && inTable_constraint_primary_key) {
 			final String columnName = util.unformatSqlName(ctx.getText());
 			table.getPrimaryKey().getColumnNames().add(columnName);
 		}
@@ -261,7 +226,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 	public void enterTable_constraint_foreign_key(
 			final Table_constraint_foreign_keyContext ctx) {
 		inTable_constraint_foreign_key = true;
-		if((inCreateTable || inAlter_table_stmt)) {
+		if(inCreateTable) {
 			foreignKey = new ForeignKey();
 			foreignKey.setTableNameOrigin(table.getName());
 		}
@@ -270,7 +235,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 	@Override
 	public void exitTable_constraint_foreign_key(
 			final Table_constraint_foreign_keyContext ctx) {
-		if((inCreateTable || inAlter_table_stmt)) {
+		if(inCreateTable) {
 			foreignKey.setTableNameOrigin(table.getName());
 			table.getForeignKeys().add(foreignKey);
 			foreignKey = null;
@@ -289,7 +254,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 
 	@Override
 	public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
-		if((inCreateTable || inAlter_table_stmt) && inColumnDef) {
+		if(inCreateTable && inColumnDef) {
 			foreignKey.setTableNameOrigin(table.getName());
 			table.getForeignKeys().add(foreignKey);
 			foreignKey = null;
@@ -298,7 +263,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 
 	@Override
 	public void exitForeign_table(final Foreign_tableContext ctx) {
-		if((inCreateTable || inAlter_table_stmt)) {
+		if(inCreateTable) {
 			foreignKey.setTableNameTarget(util.unformatSqlName(ctx.getText()));
 		}
 	}
@@ -314,7 +279,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 	@Override
 	public void exitFk_target_column_name(
 			final Fk_target_column_nameContext ctx) {
-		if((inCreateTable || inAlter_table_stmt)) {
+		if(inCreateTable) {
 			foreignKey.getColumnNameTargets().add(util.unformatSqlName(ctx.getText()));
 		}
 	}

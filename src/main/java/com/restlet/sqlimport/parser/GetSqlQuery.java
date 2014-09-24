@@ -32,11 +32,11 @@ public class GetSqlQuery {
 	 */
 	public boolean isQueryFiltered(final String query) {
 		final String queryUpperCase = query.toUpperCase();
-		if(queryUpperCase.indexOf("CREATE TABLE") != -1) {
+		if(queryUpperCase.indexOf("CREATE TABLE") == 0) {
 			return false;
 		}
 		// support ALTER TABLE with ADD CONSTRAINT
-		if(queryUpperCase.indexOf("ALTER TABLE") != -1) {
+		if(queryUpperCase.indexOf("ALTER TABLE") == 0) {
 			if(queryUpperCase.indexOf("ADD CONSTRAINT") != -1) {
 				if((queryUpperCase.indexOf("PRIMARY KEY") != -1) || (queryUpperCase.indexOf("FOREIGN KEY") != -1)) {
 					return false;
