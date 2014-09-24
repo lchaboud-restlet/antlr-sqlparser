@@ -79,10 +79,15 @@ sql_stmt
  ;
 
 alter_table_stmt
- : K_ALTER K_TABLE ( database_name '.' )? table_name
+ : K_ALTER K_TABLE ( database_name '.' )? source_table_name
    ( K_RENAME K_TO new_table_name
    | K_ADD K_COLUMN? column_def
+   | alter_table_add_constraint
    )
+ ;
+
+alter_table_add_constraint
+ : K_ADD K_CONSTRAINT any_name table_constraint
  ;
 
 analyze_stmt
@@ -366,7 +371,7 @@ expr
  ;
 
 foreign_key_clause
- : K_REFERENCES foreign_table ( '(' fk_target_column_name ( ',' fk_target_column_name )* ')' )?
+ : K_REFERENCES ( database_name '.' )? foreign_table ( '(' fk_target_column_name ( ',' fk_target_column_name )* ')' )?
    ( ( K_ON ( K_DELETE | K_UPDATE ) ( K_SET K_NULL
                                     | K_SET K_DEFAULT
                                     | K_CASCADE
@@ -668,6 +673,10 @@ function_name
  ;
 
 database_name
+ : any_name
+ ;
+
+source_table_name 
  : any_name
  ;
 

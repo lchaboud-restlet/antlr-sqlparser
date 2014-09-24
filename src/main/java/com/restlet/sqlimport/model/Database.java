@@ -13,6 +13,15 @@ public class Database {
 	 */
 	private List<Table> tables = new ArrayList<Table>();
 
+	public Table getTableForName(final String tableName) {
+		for(final Table table : tables) {
+			if(table.getName().equalsIgnoreCase(tableName)) {
+				return table;
+			}
+		}
+		return null;
+	}
+
 	public List<Table> getTables() {
 		return tables;
 	}

@@ -13,6 +13,8 @@ import com.restlet.sqlimport.model.Column;
 import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.parser.SqlParser.Alter_table_add_constraintContext;
+import com.restlet.sqlimport.parser.SqlParser.Alter_table_stmtContext;
 import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_not_nullContext;
 import com.restlet.sqlimport.parser.SqlParser.Column_constraint_primary_keyContext;
@@ -26,6 +28,7 @@ import com.restlet.sqlimport.parser.SqlParser.Foreign_key_clauseContext;
 import com.restlet.sqlimport.parser.SqlParser.Foreign_tableContext;
 import com.restlet.sqlimport.parser.SqlParser.Indexed_columnContext;
 import com.restlet.sqlimport.parser.SqlParser.NameContext;
+import com.restlet.sqlimport.parser.SqlParser.Source_table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
@@ -168,6 +171,9 @@ public class SqlImport {
 			boolean inColumnDef = false; // Column definition in CREATE TABLE
 			boolean inTypeName = false; // Column type in the column definition in CREATE TABLE
 			boolean inTable_constraint_primary_key = false; // PRIMARY KEY in CREATE TABLE
+			boolean inAlter_table_stmt = false; // ALTER TABLE
+			boolean inAlter_table_add_constraint = false; // ALTER TABLE with ADD CONSTRAINT
+			boolean inTable_constraint_foreign_key = false; // FOREIGN KEY
 
 			Util util = new Util();
 
@@ -282,6 +288,39 @@ public class SqlImport {
 				}
 			}
 
+			//--- ALTER TABLE
+
+			@Override
+			public void enterAlter_table_stmt(final Alter_table_stmtContext ctx) {
+				inAlter_table_stmt = true;
+			}
+
+			@Override
+			public void exitAlter_table_stmt(final Alter_table_stmtContext ctx) {
+				inAlter_table_stmt = false;
+			}
+
+			@Override
+			public void exitSource_table_name(final Source_table_nameContext ctx) {
+				if(inAlter_table_stmt) {
+					table = database.getTableForName(util.unformatSqlName(ctx.getText()));
+				}
+			}
+
+			//--- Add constraint
+
+			@Override
+			public void enterAlter_table_add_constraint(
+					final Alter_table_add_constraintContext ctx) {
+				inAlter_table_add_constraint = true;
+			}
+
+			@Override
+			public void exitAlter_table_add_constraint(
+					final Alter_table_add_constraintContext ctx) {
+				inAlter_table_add_constraint = false;
+			}
+
 			//--- Constraints
 
 			//--- Default
@@ -313,7 +352,7 @@ public class SqlImport {
 				}
 			}
 
-			//--- Primary Key in Table definition
+			//--- Primary Key in CREATE TABLE or in ALTER TABLE
 
 			@Override
 			public void enterTable_constraint_primary_key(
@@ -329,18 +368,19 @@ public class SqlImport {
 
 			@Override
 			public void exitIndexed_column(final Indexed_columnContext ctx) {
-				if(inCreateTable && inTable_constraint_primary_key) {
+				if((inCreateTable || inAlter_table_stmt) && inTable_constraint_primary_key) {
 					final String columnName = util.unformatSqlName(ctx.getText());
 					table.getPrimaryKey().getColumnNames().add(columnName);
 				}
 			}
 
-			//--- Foreign Key
+			//--- Foreign Key in CREATE TABLE or in ALTER TABLE
 
 			@Override
 			public void enterTable_constraint_foreign_key(
 					final Table_constraint_foreign_keyContext ctx) {
-				if(inCreateTable) {
+				inTable_constraint_foreign_key = true;
+				if((inCreateTable || inAlter_table_stmt)) {
 					foreignKey = new ForeignKey();
 					foreignKey.setTableNameOrigin(table.getName());
 				}
@@ -349,16 +389,17 @@ public class SqlImport {
 			@Override
 			public void exitTable_constraint_foreign_key(
 					final Table_constraint_foreign_keyContext ctx) {
-				if(inCreateTable) {
+				if((inCreateTable || inAlter_table_stmt)) {
 					foreignKey.setTableNameOrigin(table.getName());
 					table.getForeignKeys().add(foreignKey);
 					foreignKey = null;
 				}
+				inTable_constraint_foreign_key = false;
 			}
 
 			@Override
 			public void enterForeign_key_clause(final Foreign_key_clauseContext ctx) {
-				if(inColumnDef) {
+				if(inCreateTable && inColumnDef) {
 					foreignKey = new ForeignKey();
 					foreignKey.setTableNameOrigin(table.getName());
 					foreignKey.getColumnNameOrigins().add(column.getName());
@@ -367,7 +408,7 @@ public class SqlImport {
 
 			@Override
 			public void exitForeign_key_clause(final Foreign_key_clauseContext ctx) {
-				if(inColumnDef) {
+				if((inCreateTable || inAlter_table_stmt) && inColumnDef) {
 					foreignKey.setTableNameOrigin(table.getName());
 					table.getForeignKeys().add(foreignKey);
 					foreignKey = null;
@@ -376,7 +417,7 @@ public class SqlImport {
 
 			@Override
 			public void exitForeign_table(final Foreign_tableContext ctx) {
-				if(inCreateTable) {
+				if((inCreateTable || inAlter_table_stmt)) {
 					foreignKey.setTableNameTarget(util.unformatSqlName(ctx.getText()));
 				}
 			}
@@ -392,7 +433,7 @@ public class SqlImport {
 			@Override
 			public void exitFk_target_column_name(
 					final Fk_target_column_nameContext ctx) {
-				if(inCreateTable) {
+				if((inCreateTable || inAlter_table_stmt)) {
 					foreignKey.getColumnNameTargets().add(util.unformatSqlName(ctx.getText()));
 				}
 			}

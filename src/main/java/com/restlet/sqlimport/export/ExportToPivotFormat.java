@@ -22,7 +22,7 @@ public class ExportToPivotFormat {
 	 */
 	public void write(final Database database, final OutputStream os) {
 
-		final String content = getLines(database);
+		final String content = getContent(database);
 
 		final Util util = new Util();
 		util.write(content, os);
@@ -33,7 +33,7 @@ public class ExportToPivotFormat {
 	 * @param database Database schema
 	 * @return lines
 	 */
-	public String getLines(final Database database) {
+	public String getContent(final Database database) {
 
 		final JSONStringer jsonStringer = new JSONStringer();
 

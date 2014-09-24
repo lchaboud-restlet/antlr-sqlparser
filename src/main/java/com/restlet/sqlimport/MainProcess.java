@@ -47,7 +47,7 @@ public class MainProcess {
 		} else {
 			// Export
 			final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
-			final String pivotFileContent = sqlExport.getLines(database);
+			final String pivotFileContent = sqlExport.getContent(database);
 
 			report.setReportStatus(ReportStatus.PIVOT_FILE_GENERATED);
 			return pivotFileContent;

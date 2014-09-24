@@ -20,7 +20,7 @@ public class ExportToPivotFormatTest {
 		final Database database = new Database();
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[]", content);
@@ -35,7 +35,7 @@ public class ExportToPivotFormatTest {
 		table1.setName("table 1");
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[]}]", content);
@@ -53,7 +53,7 @@ public class ExportToPivotFormatTest {
 		table1.getColumnByNames().put(column1.getName(), column1);
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"nullable\":true}]}]", content);
@@ -72,7 +72,7 @@ public class ExportToPivotFormatTest {
 		table1.getPrimaryKey().getColumnNames().add("column 1");
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"nullable\":true}]}]", content);
@@ -96,7 +96,7 @@ public class ExportToPivotFormatTest {
 		table1.getForeignKeys().add(foreignKey);
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true}]}]", content);
@@ -119,7 +119,7 @@ public class ExportToPivotFormatTest {
 		column1.setDefaultValue("default");
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":false,\"defaultValue\":\"default\"}]}]", content);
@@ -142,7 +142,7 @@ public class ExportToPivotFormatTest {
 		column1.setDefaultValue("default");
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
@@ -171,7 +171,7 @@ public class ExportToPivotFormatTest {
 		table1.getForeignKeys().add(foreignKey);
 
 		// When
-		final String content = exportToPivotFormat.getLines(database);
+		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);

@@ -49,6 +49,9 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.getDatabase(sqlContent);
 
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+
 		// Database schema
 		assertEquals(3, database.getTables().size());
 		final Table table3 = database.getTables().get(0);
@@ -126,6 +129,14 @@ public class SqlImportTest {
 		// not null
 		assertTrue(t2_id.getIsNotNull());
 		assertFalse(t2_nom.getIsNotNull());
+		// clé étrangère
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("table2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("table3", fk_table2_table3.getTableNameTarget());
+		assertEquals("id_table3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
 
 		// Table 3
 		assertEquals(2, table3.getColumnByNames().keySet().size());
@@ -151,10 +162,9 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.getDatabase(sqlContent);
 
-		assertEquals(5, database.getTables().size());
-
+		// Then
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(5, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(5, database.getTables().size());
@@ -210,6 +220,16 @@ public class SqlImportTest {
 		assertEquals("Company", cle_company_id.getTableNameTarget());
 		assertEquals("company_id", cle_company_id.getColumnNameOrigins().get(0));
 		assertEquals("id", cle_company_id.getColumnNameTargets().get(0));
+
+		// table2
+		// clé étrangère
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("table2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("table3", fk_table2_table3.getTableNameTarget());
+		assertEquals("id_table3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
 	}
 
 	@Test
@@ -407,7 +427,7 @@ public class SqlImportTest {
 		assertEquals(4, database.getTables().size());
 
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
 		// Database schema
 		assertEquals(4, database.getTables().size());
@@ -421,7 +441,7 @@ public class SqlImportTest {
 		final Table typeContract = database.getTables().get(3);
 		assertEquals("TYPE_CONTRACT", typeContract.getName());
 
-		// Table 1
+		// Table proposal
 		System.out.println(proposal.getColumnByNames().keySet());
 		assertEquals(12, proposal.getColumnByNames().keySet().size());
 		final Column t1_ID_PROPOSAL = proposal.getColumnByNames().get("ID_PROPOSAL");
@@ -455,6 +475,42 @@ public class SqlImportTest {
 		assertFalse(t1_FLAG_EXP.getIsNotNull());
 		// clé étrangère
 		assertEquals(0, proposal.getForeignKeys().size());
+
+		// Table contract
+		System.out.println(contract.getColumnByNames().keySet());
+		assertEquals(13, contract.getColumnByNames().keySet().size());
+		final Column t2_ID_CONTRACT = contract.getColumnByNames().get("ID_CONTRACT");
+		final Column t2_NB_DURATION_IN_MONTHS = contract.getColumnByNames().get("NB_DURATION_IN_MONTHS");
+		final Column t2_TX = contract.getColumnByNames().get("TX");
+		final Column t2_MT_ORIG = contract.getColumnByNames().get("MT_ORIG");
+		final Column t2_MT_MONTH = contract.getColumnByNames().get("MT_MONTH");
+		final Column t2_NB_DURATION_MONTH = contract.getColumnByNames().get("NB_DURATION_MONTH");
+		// name
+		assertEquals("ID_CONTRACT", t2_ID_CONTRACT.getName());
+		assertEquals("NB_DURATION_IN_MONTHS", t2_NB_DURATION_IN_MONTHS.getName());
+		assertEquals("TX", t2_TX.getName());
+		assertEquals("MT_ORIG", t2_MT_ORIG.getName());
+		assertEquals("MT_MONTH", t2_MT_MONTH.getName());
+		assertEquals("NB_DURATION_MONTH", t2_NB_DURATION_MONTH.getName());
+		// type
+		assertEquals("NUMBER", t2_ID_CONTRACT.getType());
+		assertEquals("NUMBER", t2_NB_DURATION_IN_MONTHS.getType());
+		assertEquals("NUMBER", t2_TX.getType());
+		assertEquals("NUMBER", t2_MT_ORIG.getType());
+		assertEquals("NUMBER", t2_MT_MONTH.getType());
+		assertEquals("NUMBER", t2_NB_DURATION_MONTH.getType());
+		// primary key
+		assertEquals(1, contract.getPrimaryKey().getColumnNames().size());
+		assertEquals("ID_CONTRACT", contract.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertFalse(t2_ID_CONTRACT.getIsNotNull());
+		assertFalse(t2_NB_DURATION_IN_MONTHS.getIsNotNull());
+		assertFalse(t2_TX.getIsNotNull());
+		assertFalse(t2_MT_ORIG.getIsNotNull());
+		assertFalse(t2_MT_MONTH.getIsNotNull());
+		assertFalse(t2_NB_DURATION_MONTH.getIsNotNull());
+		// clé étrangère
+		assertEquals(3, contract.getForeignKeys().size());
 	}
 
 	@Test
