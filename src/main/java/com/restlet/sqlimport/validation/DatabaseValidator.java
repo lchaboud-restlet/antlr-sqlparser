@@ -26,18 +26,13 @@ public class DatabaseValidator {
 	}
 
 	/**
-	 * Validate database and return true if the database is valid.
+	 * Validate database
 	 * @param database Database
-	 * @return true if the database is valid
 	 */
-	public boolean validateDatabase(final Database database) {
-		boolean isValid = true;
-
+	public void validateDatabase(final Database database) {
 		for(final Table table : database.getTables()) {
-			isValid = isValid && isValidTable(table);
+			validateTable(table);
 		}
-
-		return isValid;
 	}
 
 	/**
@@ -45,16 +40,13 @@ public class DatabaseValidator {
 	 * @param table Table
 	 * @return true if the table is valid
 	 */
-	public boolean isValidTable(final Table table) {
-		boolean isValid = true;
-
+	public void validateTable(final Table table) {
 		// primary key with only one column
 		if(table.getPrimaryKey().getColumnNames().size() > 1) {
 			final ReportLine reportLine = new ReportLine();
 			report.add(reportLine);
 			reportLine.setReportLineStatus(ReportLineStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN);
-			reportLine.setMessage(table.getName());
-			isValid = false;
+			reportLine.setTable(table.getName());
 		}
 
 		// foreign key with only one column
@@ -63,12 +55,9 @@ public class DatabaseValidator {
 				final ReportLine reportLine = new ReportLine();
 				report.add(reportLine);
 				reportLine.setReportLineStatus(ReportLineStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN);
-				reportLine.setMessage(table.getName());
-				isValid = false;
+				reportLine.setTable(table.getName());
 			}
 		}
-
-		return isValid;
 	}
 
 }

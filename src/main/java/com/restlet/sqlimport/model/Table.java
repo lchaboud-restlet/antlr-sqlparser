@@ -34,9 +34,12 @@ public class Table {
 	 */
 	public ForeignKey getForeignKeyForColumnNameOrigin(final Column column) {
 		for(final ForeignKey foreignKey : getForeignKeys()) {
-			for(final String columnNameOrigin : foreignKey.getColumnNameOrigins()) {
-				if(column.getName().equals(columnNameOrigin)) {
-					return foreignKey;
+			// We ignore foreign keys with more than one column
+			if(foreignKey.getColumnNameOrigins().size() == 1) {
+				for(final String columnNameOrigin : foreignKey.getColumnNameOrigins()) {
+					if(column.getName().equals(columnNameOrigin)) {
+						return foreignKey;
+					}
 				}
 			}
 		}

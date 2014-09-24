@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.restlet.sqlimport.report.Report;
-import com.restlet.sqlimport.report.ReportLine;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -20,7 +19,7 @@ public class Main {
 			System.out.println("Please define these two arguments :");
 			System.out.println(" 1: input file name");
 			System.out.println(" 2: output file name");
-			System.exit(0);
+			System.exit(1);
 		}
 
 		final String input = args[0];
@@ -43,19 +42,14 @@ public class Main {
 
 			final Report report = mainProcess.getReport();
 
-			if(report.getReportStatus() != null) {
-				System.out.println("Import status : "+report.getReportStatus());
-				System.out.println("");
-			}
-			for(final ReportLine reportLine : report.getReportLines()) {
-				System.out.println("---");
-				System.out.println("Query : \n"+reportLine.getQuery());
-				System.out.println("=> Status : " + reportLine.getReportLineStatus());
-				if(reportLine.getMessage() != null) {
-					System.out.println(reportLine.getMessage());
-				}
-				System.out.println("");
-			}
+			System.out.println(report.toString());
+
+			System.exit(0);
+		}
+		catch (final Exception e) {
+			System.err.println(e.getMessage());
+			System.err.println(e);
+			System.exit(1);
 		}
 		finally {
 			if(in != null) {

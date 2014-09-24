@@ -39,20 +39,18 @@ public class MainProcess {
 
 		// Database schema validator
 		final DatabaseValidator databaseValidator = new DatabaseValidator(report);
-		final boolean isValidDatabase = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
-		if(!isValidDatabase) {
-			report.setReportStatus(ReportStatus.NOT_SUPPORTED_DATABASE);
-			return null;
-		} else {
-			// Export
-			final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
-			final String pivotFileContent = sqlExport.getContent(database);
+		// Export
+		final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
+		final String pivotFileContent = sqlExport.getContent(database);
 
-			report.setReportStatus(ReportStatus.PIVOT_FILE_GENERATED);
-			return pivotFileContent;
-		}
+		report.setReportStatus(ReportStatus.SUCCESS);
 
+		// Summary
+		report.setNbCreatedEntity(database.getTables().size());
+
+		return pivotFileContent;
 	}
 
 	/**

@@ -17,6 +17,35 @@ public class ReportLine {
 	 * Status.
 	 */
 	private ReportLineStatus reportLineStatus;
+	/**
+	 * Table.
+	 */
+	private String table;
+	/**
+	 * Column.
+	 */
+	private String column;
+
+	@Override
+	public String toString() {
+		final StringBuffer out = new StringBuffer();
+		if(reportLineStatus != null) {
+			out.append("\n - status : ").append(reportLineStatus);
+		}
+		if(message != null) {
+			out.append("\n - message : ").append(message);
+		}
+		if(query != null) {
+			out.append("\n - query : ").append(query);
+		}
+		if(table != null) {
+			out.append("\n - table : ").append(table);
+		}
+		if(column != null) {
+			out.append("\n - column : ").append(column);
+		}
+		return out.toString();
+	}
 
 	public String getMessage() {
 		return message;
@@ -35,6 +64,18 @@ public class ReportLine {
 	}
 	public void setReportLineStatus(final ReportLineStatus reportStatus) {
 		this.reportLineStatus = reportStatus;
+	}
+	public String getTable() {
+		return table;
+	}
+	public void setTable(final String table) {
+		this.table = table;
+	}
+	public String getColumn() {
+		return column;
+	}
+	public void setColumn(final String column) {
+		this.column = column;
 	}
 
 }

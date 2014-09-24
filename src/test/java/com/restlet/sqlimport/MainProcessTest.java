@@ -49,8 +49,8 @@ public class MainProcessTest {
 
 		// Then
 		final Report report = mainProcess.getReport();
-		assertEquals(ReportStatus.NOT_SUPPORTED_DATABASE, report.getReportStatus());
-		assertNull(out);
+		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
+		assertNotNull(out);
 	}
 
 	@Test
@@ -65,11 +65,11 @@ public class MainProcessTest {
 
 		final Report report = mainProcess.getReport();
 
-		assertEquals(ReportStatus.NOT_SUPPORTED_DATABASE, report.getReportStatus());
+		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
 		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
-		assertNull(out);
+		assertNotNull(out);
 	}
 
 	@Test
@@ -84,11 +84,11 @@ public class MainProcessTest {
 
 		final Report report = mainProcess.getReport();
 
-		assertEquals(ReportStatus.NOT_SUPPORTED_DATABASE, report.getReportStatus());
+		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
 		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
-		assertNull(out);
+		assertNotNull(out);
 	}
 
 	@Test
@@ -103,7 +103,7 @@ public class MainProcessTest {
 
 		final Report report = mainProcess.getReport();
 
-		assertEquals(ReportStatus.PIVOT_FILE_GENERATED, report.getReportStatus());
+		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
 		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 
@@ -122,7 +122,7 @@ public class MainProcessTest {
 
 		final Report report = mainProcess.getReport();
 
-		assertEquals(ReportStatus.PIVOT_FILE_GENERATED, report.getReportStatus());
+		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
 		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
 

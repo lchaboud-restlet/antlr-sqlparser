@@ -1,6 +1,6 @@
 package com.restlet.sqlimport.validation;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -9,12 +9,14 @@ import com.restlet.sqlimport.model.Database;
 import com.restlet.sqlimport.model.ForeignKey;
 import com.restlet.sqlimport.model.Table;
 import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportLine;
+import com.restlet.sqlimport.report.ReportLineStatus;
 
 
 public class DatabaseValidatorTest {
 
 	@Test
-	public void testValidateTable_empty() {
+	public void testValidateTable_ok() {
 		// Given
 		final Report report = new Report();
 		final DatabaseValidator databaseValidator = new DatabaseValidator(report);
@@ -24,10 +26,10 @@ public class DatabaseValidatorTest {
 		database.getTables().add(table);
 
 		// When
-		final boolean isValid = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
 		// Then
-		assertTrue(isValid);
+		assertTrue(report.getReportLines().isEmpty());
 	}
 
 	@Test
@@ -42,10 +44,10 @@ public class DatabaseValidatorTest {
 		table.getPrimaryKey().getColumnNames().add("c1");
 
 		// When
-		final boolean isValid = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
 		// Then
-		assertTrue(isValid);
+		assertTrue(report.getReportLines().isEmpty());
 	}
 
 	@Test
@@ -61,11 +63,14 @@ public class DatabaseValidatorTest {
 		table.getPrimaryKey().getColumnNames().add("c2");
 
 		// When
-		final boolean isValid = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
 		// Then
-		assertFalse(isValid);
+		assertEquals(1,report.getReportLines().size());
+		final ReportLine reportLine = report.getReportLines().get(0);
+		assertEquals(ReportLineStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN,reportLine.getReportLineStatus());
 	}
+
 	@Test
 	public void testValidateTable_fk_with_one_column() {
 		// Given
@@ -81,10 +86,10 @@ public class DatabaseValidatorTest {
 		foreignKey.getColumnNameTargets().add("c1");
 
 		// When
-		final boolean isValid = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
 		// Then
-		assertTrue(isValid);
+		assertTrue(report.getReportLines().isEmpty());
 	}
 
 	@Test
@@ -104,10 +109,12 @@ public class DatabaseValidatorTest {
 		foreignKey.getColumnNameTargets().add("c2");
 
 		// When
-		final boolean isValid = databaseValidator.validateDatabase(database);
+		databaseValidator.validateDatabase(database);
 
 		// Then
-		assertFalse(isValid);
+		assertEquals(1,report.getReportLines().size());
+		final ReportLine reportLine = report.getReportLines().get(0);
+		assertEquals(ReportLineStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN,reportLine.getReportLineStatus());
 	}
 
 }

@@ -43,6 +43,16 @@ public class ExportToPivotFormat {
 			jsonStringer.key("name").value(table.getName());
 			jsonStringer.key("pkPolicy").value("user_generated_value");
 			jsonStringer.key("fields").array();
+			// if there is no primary key or there is a primary key with more than one column in the table,
+			// we define a new column named "id" which will be the unique primary key of the entity
+			if(table.getPrimaryKey().getColumnNames().size() != 1) {
+				jsonStringer.object();
+				jsonStringer.key("name").value("id");
+				jsonStringer.key("key").value("string");
+				jsonStringer.key("isPrimaryKey").value(true);
+				jsonStringer.endObject();
+			}
+			// columns
 			for(final String columnName : table.getColumnByNames().keySet()) {
 				final Column column = table.getColumnByNames().get(columnName);
 				jsonStringer.object();
@@ -61,6 +71,20 @@ public class ExportToPivotFormat {
 					jsonStringer.key("minOccurs").value(0);
 					jsonStringer.key("maxOccurs").value("*");
 				}
+				// primary key
+				boolean isPrimaryKey = false;
+				// define only primary key with only one column
+				if(table.getPrimaryKey().getColumnNames().size() == 1) {
+					for(final String columnNameInPrimaryKey : table.getPrimaryKey().getColumnNames()) {
+						if(columnName.equals(columnNameInPrimaryKey)) {
+							isPrimaryKey = true;
+						}
+					}
+				}
+				if(isPrimaryKey) {
+					jsonStringer.key("isPrimaryKey").value(true);
+				}
+				// nullable
 				if(column.getIsNotNull()) {
 					jsonStringer.key("nullable").value(false);
 				} else {

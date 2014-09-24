@@ -38,7 +38,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true}]}]", content);
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
 	}
 
 	@Test
@@ -75,7 +75,27 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"isPrimaryKey\":true,\"nullable\":true}]}]", content);
+	}
+
+	@Test
+	public void getLines5_primaryKey_with_more_than_one_column() {
+		// Given
+		final Database database = new Database();
+		final Table table1 = new Table();
+		database.getTables().add(table1);
+		table1.setName("table 1");
+		final Column column1 = new Column();
+		column1.setName("column 1");
+		table1.getColumnByNames().put(column1.getName(), column1);
+		table1.getPrimaryKey().getColumnNames().add("column 1");
+		table1.getPrimaryKey().getColumnNames().add("column 2");
+
+		// When
+		final String content = exportToPivotFormat.getContent(database);
+
+		// Then
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
 	}
 
 	@Test
@@ -99,7 +119,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true}]}]", content);
 	}
 
 	@Test
@@ -122,7 +142,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":false,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":false,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 	@Test
@@ -145,7 +165,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 	@Test
@@ -174,7 +194,7 @@ public class ExportToPivotFormatTest {
 		final String content = exportToPivotFormat.getContent(database);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 }

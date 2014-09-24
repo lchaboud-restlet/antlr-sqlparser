@@ -1,12 +1,19 @@
 package com.restlet.sqlimport.report;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Report.
  */
 public class Report {
+
+	/**
+	 * Date.
+	 */
+	private final Date date = new Date();
 
 	/**
 	 * Global status.
@@ -19,11 +26,31 @@ public class Report {
 	private List<ReportLine> reportLines = new ArrayList<ReportLine>();
 
 	/**
+	 * Number of created entities
+	 */
+	private int nbCreatedEntity;
+
+	@Override
+	public String toString() {
+		final StringBuffer out = new StringBuffer();
+		out.append("Report :");
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		out.append("\n - date : ").append(sdf.format(date));
+		out.append("\n - status : ").append(reportStatus);
+		out.append("\n - nb created entities : ").append(nbCreatedEntity);
+		out.append("\nLines :");
+		for(final ReportLine reportLine : reportLines) {
+			out.append("\n");
+			out.append(reportLine.toString());
+		}
+		return out.toString();
+	}
+
+	/**
 	 * Add report for the query.
 	 * @param reportLine Report line
 	 */
 	public void add(final ReportLine reportLine) {
-
 		reportLines.add(reportLine);
 	}
 
@@ -87,6 +114,18 @@ public class Report {
 
 	public void setReportStatus(final ReportStatus reportStatus) {
 		this.reportStatus = reportStatus;
+	}
+
+	public void setNbCreatedEntity(final int nbCreatedEntity) {
+		this.nbCreatedEntity = nbCreatedEntity;
+	}
+
+	public int getNbCreatedEntity() {
+		return nbCreatedEntity;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 }
