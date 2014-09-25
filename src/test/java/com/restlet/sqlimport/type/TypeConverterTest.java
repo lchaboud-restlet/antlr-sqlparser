@@ -1,4 +1,4 @@
-package com.restlet.sqlimport.export;
+package com.restlet.sqlimport.type;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLineStatus;
+import com.restlet.sqlimport.type.TypeConverter;
 
 
 public class TypeConverterTest {

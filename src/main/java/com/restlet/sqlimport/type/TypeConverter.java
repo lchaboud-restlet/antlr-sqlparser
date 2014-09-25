@@ -1,8 +1,8 @@
-package com.restlet.sqlimport.export;
+package com.restlet.sqlimport.type;
 
-import com.restlet.sqlimport.model.Column;
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.model.sql.Column;
+import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.Table;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLineStatus;
 

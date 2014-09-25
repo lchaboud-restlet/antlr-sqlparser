@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-import com.restlet.sqlimport.model.Database;
+import com.restlet.sqlimport.model.sql.Database;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
 import com.restlet.sqlimport.report.ReportLineStatus;

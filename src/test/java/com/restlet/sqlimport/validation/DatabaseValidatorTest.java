@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.model.ForeignKey;
-import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.ForeignKey;
+import com.restlet.sqlimport.model.sql.Table;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLine;
 import com.restlet.sqlimport.report.ReportLineStatus;

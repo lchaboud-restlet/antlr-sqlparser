@@ -1,0 +1,296 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.3.1
+-- Dumped by pg_dump version 9.3.1
+-- Started on 2014-09-25 15:26:38
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 175 (class 3079 OID 11750)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 1979 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 170 (class 1259 OID 41339)
+-- Name: company; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE company (
+    id integer NOT NULL,
+    duns character varying(9),
+    name character varying(255),
+    address character varying(255),
+    zip_code character varying(5),
+    company_creation date,
+    website character varying(255),
+    phone_number character varying(255),
+    city character varying(255)
+);
+
+
+ALTER TABLE public.company OWNER TO postgres;
+
+--
+-- TOC entry 171 (class 1259 OID 41349)
+-- Name: contact; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE contact (
+    id character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    age integer,
+    name character varying(255),
+    firstname character varying(255),
+    company_id integer
+);
+
+
+ALTER TABLE public.contact OWNER TO postgres;
+
+--
+-- TOC entry 174 (class 1259 OID 41384)
+-- Name: table1; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE table1 (
+    id integer NOT NULL,
+    nom character varying(100) DEFAULT NULL::character varying,
+    dt date,
+    num integer,
+    id_table2 integer,
+    id_table3 integer
+);
+
+
+ALTER TABLE public.table1 OWNER TO postgres;
+
+--
+-- TOC entry 173 (class 1259 OID 41379)
+-- Name: table2; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE table2 (
+    id integer NOT NULL,
+    nom character varying(100),
+    id_table3 integer,
+    nom_table3 character varying(100)
+);
+
+
+ALTER TABLE public.table2 OWNER TO postgres;
+
+--
+-- TOC entry 172 (class 1259 OID 41374)
+-- Name: table3; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE table3 (
+    id integer NOT NULL,
+    nom character varying(100)
+);
+
+
+ALTER TABLE public.table3 OWNER TO postgres;
+
+--
+-- TOC entry 1967 (class 0 OID 41339)
+-- Dependencies: 170
+-- Data for Name: company; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY company (id, duns, name, address, zip_code, company_creation, website, phone_number, city) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1968 (class 0 OID 41349)
+-- Dependencies: 171
+-- Data for Name: contact; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY contact (id, email, age, name, firstname, company_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1971 (class 0 OID 41384)
+-- Dependencies: 174
+-- Data for Name: table1; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY table1 (id, nom, dt, num, id_table2, id_table3) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1970 (class 0 OID 41379)
+-- Dependencies: 173
+-- Data for Name: table2; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY table2 (id, nom, id_table3, nom_table3) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1969 (class 0 OID 41374)
+-- Dependencies: 172
+-- Data for Name: table3; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY table3 (id, nom) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1841 (class 2606 OID 41348)
+-- Name: company_duns_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY company
+    ADD CONSTRAINT company_duns_key UNIQUE (duns);
+
+
+--
+-- TOC entry 1843 (class 2606 OID 41346)
+-- Name: company_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY company
+    ADD CONSTRAINT company_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1845 (class 2606 OID 41358)
+-- Name: contact_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT contact_email_key UNIQUE (email);
+
+
+--
+-- TOC entry 1847 (class 2606 OID 41356)
+-- Name: contact_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT contact_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1855 (class 2606 OID 41389)
+-- Name: table1_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY table1
+    ADD CONSTRAINT table1_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1853 (class 2606 OID 41383)
+-- Name: table2_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY table2
+    ADD CONSTRAINT table2_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1849 (class 2606 OID 41378)
+-- Name: table3_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY table3
+    ADD CONSTRAINT table3_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1851 (class 2606 OID 41401)
+-- Name: u_table3; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY table3
+    ADD CONSTRAINT u_table3 UNIQUE (id, nom);
+
+
+--
+-- TOC entry 1856 (class 2606 OID 41359)
+-- Name: contact_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT contact_company_id_fkey FOREIGN KEY (company_id) REFERENCES company(id);
+
+
+--
+-- TOC entry 1857 (class 2606 OID 41402)
+-- Name: fk_table2_table3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY table2
+    ADD CONSTRAINT fk_table2_table3 FOREIGN KEY (id_table3, nom_table3) REFERENCES table3(id, nom) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 1858 (class 2606 OID 41390)
+-- Name: table1_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY table1
+    ADD CONSTRAINT table1_ibfk_1 FOREIGN KEY (id_table2) REFERENCES table2(id);
+
+
+--
+-- TOC entry 1859 (class 2606 OID 41395)
+-- Name: table1_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY table1
+    ADD CONSTRAINT table1_ibfk_2 FOREIGN KEY (id_table3) REFERENCES table3(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 1978 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2014-09-25 15:26:39
+
+--
+-- PostgreSQL database dump complete
+--
+

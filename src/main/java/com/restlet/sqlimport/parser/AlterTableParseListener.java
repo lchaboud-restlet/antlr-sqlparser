@@ -1,9 +1,9 @@
 package com.restlet.sqlimport.parser;
 
-import com.restlet.sqlimport.model.Column;
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.model.ForeignKey;
-import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.model.sql.Column;
+import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.ForeignKey;
+import com.restlet.sqlimport.model.sql.Table;
 import com.restlet.sqlimport.parser.SqlParser.Alter_table_add_constraintContext;
 import com.restlet.sqlimport.parser.SqlParser.Alter_table_stmtContext;
 import com.restlet.sqlimport.parser.SqlParser.Any_nameContext;

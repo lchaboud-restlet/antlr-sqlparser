@@ -4,15 +4,17 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.restlet.sqlimport.model.Column;
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.model.ForeignKey;
-import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.model.resdef.Resdef;
+import com.restlet.sqlimport.model.sql.Column;
+import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.ForeignKey;
+import com.restlet.sqlimport.model.sql.Table;
 
 
 public class ExportToPivotFormatTest {
 
-	private ExportToPivotFormat exportToPivotFormat = new ExportToPivotFormat();
+	private DatabaseToResdef databaseToResdef = new DatabaseToResdef();
+	private ResdefToJson resdefToJson = new ResdefToJson();
 
 	@Test
 	public void getLines1() {
@@ -20,7 +22,8 @@ public class ExportToPivotFormatTest {
 		final Database database = new Database();
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
 		assertEquals("[]", content);
@@ -35,10 +38,11 @@ public class ExportToPivotFormatTest {
 		table1.setName("table 1");
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true}]}]", content);
 	}
 
 	@Test
@@ -53,10 +57,11 @@ public class ExportToPivotFormatTest {
 		table1.getColumnByNames().put(column1.getName(), column1);
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
 	}
 
 	@Test
@@ -72,7 +77,8 @@ public class ExportToPivotFormatTest {
 		table1.getPrimaryKey().getColumnNames().add("column 1");
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
 		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"column 1\",\"isPrimaryKey\":true,\"nullable\":true}]}]", content);
@@ -92,10 +98,11 @@ public class ExportToPivotFormatTest {
 		table1.getPrimaryKey().getColumnNames().add("column 2");
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"nullable\":true}]}]", content);
 	}
 
 	@Test
@@ -116,10 +123,11 @@ public class ExportToPivotFormatTest {
 		table1.getForeignKeys().add(foreignKey);
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"nullable\":true,\"minOccurs\":0,\"maxOccurs\":\"*\"}]}]", content);
 	}
 
 	@Test
@@ -139,10 +147,11 @@ public class ExportToPivotFormatTest {
 		column1.setDefaultValue("default");
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":false,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":false,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 	@Test
@@ -162,10 +171,11 @@ public class ExportToPivotFormatTest {
 		column1.setDefaultValue("default");
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"convertedType\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
 	}
 
 	@Test
@@ -191,10 +201,11 @@ public class ExportToPivotFormatTest {
 		table1.getForeignKeys().add(foreignKey);
 
 		// When
-		final String content = exportToPivotFormat.getContent(database);
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		final String content = resdefToJson.resdefToJson(resdef);
 
 		// Then
-		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"key\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"minOccurs\":0,\"maxOccurs\":\"*\",\"nullable\":true,\"defaultValue\":\"default\"}]}]", content);
+		assertEquals("[{\"name\":\"table 1\",\"pkPolicy\":\"user_generated_value\",\"fields\":[{\"name\":\"id\",\"type\":\"string\",\"isPrimaryKey\":true},{\"name\":\"column 1\",\"type\":\"tableNameTarget\",\"nullable\":true,\"defaultValue\":\"default\",\"minOccurs\":0,\"maxOccurs\":\"*\"}]}]", content);
 	}
 
 }

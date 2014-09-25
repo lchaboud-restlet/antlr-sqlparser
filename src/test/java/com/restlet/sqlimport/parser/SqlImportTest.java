@@ -13,10 +13,10 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import com.restlet.sqlimport.model.Column;
-import com.restlet.sqlimport.model.Database;
-import com.restlet.sqlimport.model.ForeignKey;
-import com.restlet.sqlimport.model.Table;
+import com.restlet.sqlimport.model.sql.Column;
+import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.ForeignKey;
+import com.restlet.sqlimport.model.sql.Table;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLineStatus;
 import com.restlet.sqlimport.util.Util;
@@ -238,7 +238,7 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testGetDatabase_postgres() throws FileNotFoundException {
+	public void testGetDatabase_postgres_sql() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/postgres.sql");
 		final InputStream in = new FileInputStream(file);
@@ -251,6 +251,188 @@ public class SqlImportTest {
 
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
 		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+
+		// Database schema
+		assertEquals(9, database.getTables().size());
+
+		final Table users = database.getTables().get(0);
+		assertEquals("users", users.getName());
+		final Table article = database.getTables().get(1);
+		assertEquals("article", article.getName());
+		final Table Comment = database.getTables().get(2);
+		assertEquals("Comment", Comment.getName());
+		final Table Link = database.getTables().get(3);
+		assertEquals("Link", Link.getName());
+		final Table keyword = database.getTables().get(4);
+		assertEquals("keyword", keyword.getName());
+		final Table article_keyword = database.getTables().get(5);
+		assertEquals("article_keyword", article_keyword.getName());
+		final Table table3 = database.getTables().get(6);
+		assertEquals("table3", table3.getName());
+		final Table table2 = database.getTables().get(7);
+		assertEquals("table2", table2.getName());
+		final Table table1 = database.getTables().get(8);
+		assertEquals("table1", table1.getName());
+
+		// Table table2
+		System.out.println(table2.getColumnByNames().keySet());
+		assertEquals(4, table2.getColumnByNames().keySet().size());
+		final Column t_table2_id = table2.getColumnByNames().get("id");
+		final Column t_table2_nom = table2.getColumnByNames().get("nom");
+		final Column t_table2_id_table3 = table2.getColumnByNames().get("id_table3");
+		final Column t_table2_nom_table3 = table2.getColumnByNames().get("nom_table3");
+		// name
+		assertEquals("id", t_table2_id.getName());
+		assertEquals("nom", t_table2_nom.getName());
+		assertEquals("id_table3", t_table2_id_table3.getName());
+		assertEquals("nom_table3", t_table2_nom_table3.getName());
+		// type
+		assertEquals("integer", t_table2_id.getType());
+		assertEquals("character varying", t_table2_nom.getType());
+		assertEquals("integer", t_table2_id_table3.getType());
+		assertEquals("character varying", t_table2_nom_table3.getType());
+		// primary key
+		assertEquals(1, table2.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", table2.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertTrue(t_table2_id.getIsNotNull());
+		assertFalse(t_table2_nom.getIsNotNull());
+		assertFalse(t_table2_id_table3.getIsNotNull());
+		assertFalse(t_table2_nom_table3.getIsNotNull());
+		// clé étrangère
+		assertEquals(1, table2.getForeignKeys().size());
+
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("table2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("table3", fk_table2_table3.getTableNameTarget());
+		assertEquals("id_table3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
+
+		// Table table3
+		System.out.println(table3.getColumnByNames().keySet());
+		assertEquals(2, table3.getColumnByNames().keySet().size());
+		final Column t_table3_id = table3.getColumnByNames().get("id");
+		final Column t_table3_nom = table3.getColumnByNames().get("nom");
+		// name
+		assertEquals("id", t_table3_id.getName());
+		assertEquals("nom", t_table3_nom.getName());
+		// type
+		assertEquals("integer", t_table3_id.getType());
+		assertEquals("character varying", t_table3_nom.getType());
+		// primary key
+		assertEquals(1, table3.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", table3.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertTrue(t_table3_id.getIsNotNull());
+		assertFalse(t_table3_nom.getIsNotNull());
+		// clé étrangère
+		assertEquals(0, table3.getForeignKeys().size());
+
+		// Table article_keyword
+		System.out.println(article_keyword.getColumnByNames().keySet());
+		assertEquals(3, article_keyword.getColumnByNames().keySet().size());
+		final Column t1_id = article_keyword.getColumnByNames().get("id");
+		final Column t1_article_id = article_keyword.getColumnByNames().get("article_id");
+		final Column t1_keyword_id = article_keyword.getColumnByNames().get("keyword_id");
+		// name
+		assertEquals("id", t1_id.getName());
+		assertEquals("article_id", t1_article_id.getName());
+		assertEquals("keyword_id", t1_keyword_id.getName());
+		// type
+		assertEquals("INTEGER", t1_id.getType());
+		assertEquals("INTEGER", t1_article_id.getType());
+		assertEquals("INTEGER", t1_keyword_id.getType());
+		// primary key
+		assertEquals(1, article_keyword.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", article_keyword.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertFalse(t1_id.getIsNotNull());
+		assertFalse(t1_article_id.getIsNotNull());
+		assertFalse(t1_keyword_id.getIsNotNull());
+		// clé étrangère
+		assertEquals(2, article_keyword.getForeignKeys().size());
+
+		final ForeignKey cle_article_id = article_keyword.getForeignKeys().get(0);
+		assertEquals("article_keyword", cle_article_id.getTableNameOrigin());
+		assertEquals("article", cle_article_id.getTableNameTarget());
+		assertEquals("article_id", cle_article_id.getColumnNameOrigins().get(0));
+		assertEquals("id", cle_article_id.getColumnNameTargets().get(0));
+
+		final ForeignKey cle_keyword_id = article_keyword.getForeignKeys().get(1);
+		assertEquals("article_keyword", cle_keyword_id.getTableNameOrigin());
+		assertEquals("keyword", cle_keyword_id.getTableNameTarget());
+		assertEquals("keyword_id", cle_keyword_id.getColumnNameOrigins().get(0));
+		assertEquals("id", cle_keyword_id.getColumnNameTargets().get(0));
+
+		// Table article
+		System.out.println(article.getColumnByNames().keySet());
+		assertEquals(3, article.getColumnByNames().keySet().size());
+		final Column t_article_id = article.getColumnByNames().get("id");
+		final Column t_article_name = article.getColumnByNames().get("name");
+		final Column t_article_url = article.getColumnByNames().get("url");
+		// name
+		assertEquals("id", t_article_id.getName());
+		assertEquals("name", t_article_name.getName());
+		assertEquals("url", t_article_url.getName());
+		// type
+		assertEquals("INTEGER", t_article_id.getType());
+		assertEquals("varchar", t_article_name.getType());
+		assertEquals("varchar", t_article_url.getType());
+		// primary key
+		assertEquals(1, article.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", article.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertFalse(t_article_id.getIsNotNull());
+		assertFalse(t_article_name.getIsNotNull());
+		assertFalse(t_article_url.getIsNotNull());
+		// clé étrangère
+		assertEquals(0, article.getForeignKeys().size());
+
+		// Table users
+		System.out.println(users.getColumnByNames().keySet());
+		assertEquals(4, users.getColumnByNames().keySet().size());
+		final Column t1_email = users.getColumnByNames().get("email");
+		final Column t1_name = users.getColumnByNames().get("name");
+		final Column t1_password = users.getColumnByNames().get("password");
+		final Column t1_isadmin = users.getColumnByNames().get("isadmin");
+		// name
+		assertEquals("email", t1_email.getName());
+		assertEquals("name", t1_name.getName());
+		assertEquals("password", t1_password.getName());
+		assertEquals("isadmin", t1_isadmin.getName());
+		// type
+		assertEquals("VARCHAR", t1_email.getType());
+		assertEquals("VARCHAR", t1_name.getType());
+		assertEquals("VARCHAR", t1_password.getType());
+		assertEquals("BOOLEAN", t1_isadmin.getType());
+		// primary key
+		assertEquals(1, users.getPrimaryKey().getColumnNames().size());
+		assertEquals("email", users.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertFalse(t1_email.getIsNotNull());
+		assertFalse(t1_name.getIsNotNull());
+		assertFalse(t1_password.getIsNotNull());
+		assertFalse(t1_isadmin.getIsNotNull());
+		// clé étrangère
+		assertEquals(0, users.getForeignKeys().size());
+	}
+
+	@Test
+	public void testGetDatabase_postgres_backup() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/postgres.backup");
+		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
+
+		// When
+		final Database database = sqlImport.getDatabase(sqlContent);
+
+		assertEquals(5, database.getTables().size());
+
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(14, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(9, database.getTables().size());

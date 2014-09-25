@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.restlet.sqlimport.report.Report;
+import com.restlet.sqlimport.report.ReportManager;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -42,7 +43,8 @@ public class Main {
 
 			final Report report = mainProcess.getReport();
 
-			System.out.println(report.toString());
+			final ReportManager reportManager = new ReportManager();
+			System.out.println(reportManager.toString(report));
 
 			System.exit(0);
 		}

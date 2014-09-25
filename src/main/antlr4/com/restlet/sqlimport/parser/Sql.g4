@@ -79,7 +79,7 @@ sql_stmt
  ;
 
 alter_table_stmt
- : K_ALTER K_TABLE ( database_name '.' )? source_table_name
+ : K_ALTER K_TABLE K_ONLY? ( database_name '.' )? source_table_name
    ( K_RENAME K_TO new_table_name
    | alter_table_add_constraint
    | K_ADD K_COLUMN? column_def
@@ -310,7 +310,7 @@ column_constraint_null
  ;
 
 column_default
- : K_DEFAULT (column_default_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )
+ : K_DEFAULT (column_default_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )  ( '::' type_name+ )?
  ;
 
 column_default_value
@@ -856,6 +856,7 @@ K_NULL : N U L L;
 K_OF : O F;
 K_OFFSET : O F F S E T;
 K_ON : O N;
+K_ONLY : O N L Y;
 K_OR : O R;
 K_ORDER : O R D E R;
 K_OUTER : O U T E R;

@@ -1,11 +1,13 @@
 package com.restlet.sqlimport;
 
-import com.restlet.sqlimport.export.ExportToPivotFormat;
-import com.restlet.sqlimport.export.TypeConverter;
-import com.restlet.sqlimport.model.Database;
+import com.restlet.sqlimport.export.DatabaseToResdef;
+import com.restlet.sqlimport.export.ResdefToJson;
+import com.restlet.sqlimport.model.resdef.Resdef;
+import com.restlet.sqlimport.model.sql.Database;
 import com.restlet.sqlimport.parser.SqlImport;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportStatus;
+import com.restlet.sqlimport.type.TypeConverter;
 import com.restlet.sqlimport.validation.DatabaseValidator;
 
 /**
@@ -41,16 +43,20 @@ public class MainProcess {
 		final DatabaseValidator databaseValidator = new DatabaseValidator(report);
 		databaseValidator.validateDatabase(database);
 
-		// Export
-		final ExportToPivotFormat sqlExport = new ExportToPivotFormat();
-		final String pivotFileContent = sqlExport.getContent(database);
+		// Convert to Resdef bean
+		final DatabaseToResdef databaseToResdef = new DatabaseToResdef();
+		final Resdef resdef = databaseToResdef.databaseToResdef(database);
+		report.setResdef(resdef);
 
+		// Export to JSON
+		final ResdefToJson resdefToJson = new ResdefToJson();
+		final String json = resdefToJson.resdefToJson(resdef);
 		report.setReportStatus(ReportStatus.SUCCESS);
 
 		// Summary
 		report.setNbCreatedEntity(database.getTables().size());
 
-		return pivotFileContent;
+		return json;
 	}
 
 	/**

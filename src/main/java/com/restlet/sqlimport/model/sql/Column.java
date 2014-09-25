@@ -1,4 +1,4 @@
-package com.restlet.sqlimport.model;
+package com.restlet.sqlimport.model.sql;
 
 /**
  * Table column
@@ -20,7 +20,7 @@ public class Column {
 	/**
 	 * Indicates if the column must be not null
 	 */
-	private boolean isNotNull;
+	private Boolean isNotNull;
 	/**
 	 * Converted type.
 	 */
@@ -54,11 +54,11 @@ public class Column {
 		this.length = length;
 	}
 
-	public boolean getIsNotNull() {
+	public Boolean getIsNotNull() {
 		return isNotNull;
 	}
 
-	public void setIsNotNull(final boolean isNotNull) {
+	public void setIsNotNull(final Boolean isNotNull) {
 		this.isNotNull = isNotNull;
 	}
 

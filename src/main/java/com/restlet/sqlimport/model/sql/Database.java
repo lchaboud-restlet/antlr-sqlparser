@@ -1,4 +1,4 @@
-package com.restlet.sqlimport.model;
+package com.restlet.sqlimport.model.sql;
 
 import java.util.ArrayList;
 import java.util.List;

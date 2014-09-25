@@ -1,52 +1,41 @@
 package com.restlet.sqlimport.report;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-import com.restlet.sqlimport.model.resdef.Resdef;
 import com.restlet.sqlimport.model.sql.Database;
 import com.restlet.sqlimport.model.sql.Table;
 
 /**
- * Report.
+ * Report manager
  */
-public class Report {
+public class ReportManager {
+
+	private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 
 	/**
-	 * Date.
+	 * Export report
+	 * @param report Report
+	 * @return String
 	 */
-	private final Date date = new Date();
+	public String toString(final Report report) {
+		final StringBuffer out = new StringBuffer();
+
+		out.append(getTrace1(report));
+		out.append(getTrace2(report));
+		out.append(getTrace3(report));
+		out.append(getTrace4(report));
+		out.append(getTrace5(report));
+		out.append(getTrace6(report));
+
+		return out.toString();
+	}
 
 	/**
-	 * Global status.
+	 * Trace : Starting sql import process
+	 * @param report Report
+	 * @return String
 	 */
-	private ReportStatus reportStatus;
-
-	/**
-	 * Report lines.
-	 */
-	private List<ReportLine> reportLines = new ArrayList<ReportLine>();
-
-	/**
-	 * Number of created entities
-	 */
-	private int nbCreatedEntity;
-
-	/**
-	 * Database schema.
-	 */
-	private Database database;
-
-	/**
-	 * Resdef used for JSON export
-	 */
-	private Resdef resdef;
-
-	@Override
-	public String toString() {
-		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+	public String getTrace1(final Report report) {
 
 		final StringBuffer out = new StringBuffer();
 
@@ -55,16 +44,28 @@ public class Report {
 		out.append("\nTrace : ");
 		out.append("\n - Location : Starting sql import process");
 		out.append("\n - Content : Starting sql import process");
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Type : SQL schema import");
 		out.append("\n");
+
+		return out.toString();
+	}
+
+	/**
+	 * Trace : SQL parsing
+	 * @param report Report
+	 * @return String
+	 */
+	public String getTrace2(final Report report) {
+
+		final StringBuffer out = new StringBuffer();
 
 		// sql parsing
 		out.append("\n--------------------");
 		out.append("\nTrace : ");
 		out.append("\n - Location : SQL parsing");
 		boolean hasParsingError = false;
-		for(final ReportLine reportLine : reportLines) {
+		for(final ReportLine reportLine : report.getReportLines()) {
 			if(reportLine.getReportLineStatus() == ReportLineStatus.PARSING_ERROR) {
 				hasParsingError = true;
 			}
@@ -74,9 +75,9 @@ public class Report {
 		} else {
 			out.append("\n - Level : Info");
 		}
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Content : ");
-		for(final ReportLine reportLine : reportLines) {
+		for(final ReportLine reportLine : report.getReportLines()) {
 			if( (reportLine.getReportLineStatus() == ReportLineStatus.IGNORED)
 					|| (reportLine.getReportLineStatus() == ReportLineStatus.PARSING_ERROR)
 					|| (reportLine.getReportLineStatus() == ReportLineStatus.PARSED) ) {
@@ -90,13 +91,25 @@ public class Report {
 			}
 		}
 
+		return out.toString();
+	}
+
+	/**
+	 * Trace : Checking database structure
+	 * @param report Report
+	 * @return String
+	 */
+	public String getTrace3(final Report report) {
+
+		final StringBuffer out = new StringBuffer();
+
 		// checking database structure
 		out.append("\n");
 		out.append("\n--------------------");
 		out.append("\nTrace : ");
 		out.append("\n - Location : Checking database structure");
 		boolean hasValidationWarning = false;
-		for(final ReportLine reportLine : reportLines) {
+		for(final ReportLine reportLine : report.getReportLines()) {
 			if((reportLine.getReportLineStatus() == ReportLineStatus.UNKNOWN_SQL_TYPE)
 					|| (reportLine.getReportLineStatus() == ReportLineStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN)
 					|| (reportLine.getReportLineStatus() == ReportLineStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN)) {
@@ -108,12 +121,12 @@ public class Report {
 		} else {
 			out.append("\n - Level : Info");
 		}
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Content : ");
 		if(!hasValidationWarning) {
 			out.append("The database is imported with no warning");
 		} else {
-			for(final ReportLine reportLine : reportLines) {
+			for(final ReportLine reportLine : report.getReportLines()) {
 				if((reportLine.getReportLineStatus() == ReportLineStatus.UNKNOWN_SQL_TYPE)
 						|| (reportLine.getReportLineStatus() == ReportLineStatus.PRIMARY_KEY_MORE_THAN_ONE_COLUMN)
 						|| (reportLine.getReportLineStatus() == ReportLineStatus.FOREIGN_KEY_MORE_THAN_ONE_COLUMN)) {
@@ -134,30 +147,72 @@ public class Report {
 			}
 		}
 
+		return out.toString();
+	}
+
+	/**
+	 * Trace : Configuring entity store
+	 * @param report Report
+	 * @return String
+	 */
+	public String getTrace4(final Report report) {
+
+		final StringBuffer out = new StringBuffer();
+
+
 		// configuring entity store
 		out.append("\n--------------------");
 		out.append("\nTrace : ");
 		out.append("\n - Location : Configuring entity store");
 		out.append("\n - Content : Configuring entity store");
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Type : SQL schema import");
 		out.append("\n");
+
+		return out.toString();
+	}
+
+	/**
+	 * Trace : Generating entity store
+	 * @param report Report
+	 * @return String
+	 */
+	public String getTrace5(final Report report) {
+
+		final StringBuffer out = new StringBuffer();
+
 
 		// generating entity store
 		out.append("\n--------------------");
 		out.append("\nTrace : ");
 		out.append("\n - Location : Generating entity store");
 		out.append("\n - Content : Generating entity store");
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Type : SQL schema import");
 		out.append("\n");
+
+		return out.toString();
+	}
+
+	/**
+	 * Trace : SQL schema imported : summary
+	 * @param report Report
+	 * @return String
+	 */
+	public String getTrace6(final Report report) {
+
+		final StringBuffer out = new StringBuffer();
+
+		final ReportStatus reportStatus = report.getReportStatus();
+
+		final Database database = report.getDatabase();
 
 		// SQL schema imported : summary
 		out.append("\n--------------------");
 		out.append("\nTrace : ");
 		if(reportStatus == ReportStatus.SUCCESS) {
-			out.append("\n - Location : SQL schema successfully imported : "+nbCreatedEntity+" entities created");
-			out.append("\n - Content : "+nbCreatedEntity+" entities successfully created :");
+			out.append("\n - Location : SQL schema successfully imported : "+report.getNbCreatedEntity()+" entities created");
+			out.append("\n - Content : "+report.getNbCreatedEntity()+" entities successfully created :");
 			if(database != null) {
 				for(final Table table : database.getTables()) {
 					out.append("\n    - ").append(table.getName());
@@ -168,7 +223,7 @@ public class Report {
 			out.append("\n - Location : SQL schema import failed : no table definition found in the SQL file content");
 			out.append("\n - Content : No entity created");
 		}
-		out.append("\n - Date : ").append(sdf.format(date));
+		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Type : SQL schema import");
 		out.append("\n");
 		/*
@@ -182,104 +237,6 @@ public class Report {
 		}
 		 */
 		return out.toString();
-	}
-
-	/**
-	 * Add report for the query.
-	 * @param reportLine Report line
-	 */
-	public void add(final ReportLine reportLine) {
-		reportLines.add(reportLine);
-	}
-
-	/**
-	 * Get report lines belongs their status
-	 * @param reportStatus Report status
-	 * @return Number of report lines
-	 */
-	public List<ReportLine> getReportLinesForStatus(final ReportLineStatus reportLineStatus) {
-		final List<ReportLine> reportLines = new ArrayList<ReportLine>();
-
-		for(final ReportLine reportLine : getReportLines()) {
-			if(reportLine.getReportLineStatus() == reportLineStatus) {
-				reportLines.add(reportLine);
-			}
-		}
-
-		return reportLines;
-	}
-
-	/**
-	 * Return report line corresponding to a query
-	 * @param query SQL Query
-	 * @return report line
-	 */
-	public ReportLine getReportLineForQuery(final String query) {
-		if(query == null) {
-			return null;
-		}
-		for(final ReportLine reportLine : reportLines) {
-			if(query.equals(reportLine.getQuery())) {
-				return reportLine;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Add message.
-	 * @param reportStatus Status
-	 * @param message Message
-	 */
-	public void addMessage(final ReportLineStatus reportLineStatus, final String message) {
-		final ReportLine reportLine = new ReportLine();
-		reportLine.setReportLineStatus(reportLineStatus);
-		reportLine.setMessage(message);
-		reportLines.add(reportLine);
-	}
-
-	public List<ReportLine> getReportLines() {
-		return reportLines;
-	}
-
-	public void setReportLines(final List<ReportLine> messages) {
-		this.reportLines = messages;
-	}
-
-	public ReportStatus getReportStatus() {
-		return reportStatus;
-	}
-
-	public void setReportStatus(final ReportStatus reportStatus) {
-		this.reportStatus = reportStatus;
-	}
-
-	public void setNbCreatedEntity(final int nbCreatedEntity) {
-		this.nbCreatedEntity = nbCreatedEntity;
-	}
-
-	public int getNbCreatedEntity() {
-		return nbCreatedEntity;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public Database getDatabase() {
-		return database;
-	}
-
-	public void setDatabase(final Database database) {
-		this.database = database;
-	}
-
-	public Resdef getResdef() {
-		return resdef;
-	}
-
-	public void setResdef(final Resdef resdef) {
-		this.resdef = resdef;
 	}
 
 }
