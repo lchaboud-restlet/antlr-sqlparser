@@ -43,17 +43,6 @@ public class Report {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
 
 		final StringBuffer out = new StringBuffer();
-		/*
-		out.append("Report :");
-		out.append("\n - date : ").append(sdf.format(date));
-		out.append("\n - status : ").append(reportStatus);
-		out.append("\n - nb created entities : ").append(nbCreatedEntity);
-		out.append("\nLines :");
-		for(final ReportLine reportLine : reportLines) {
-			out.append("\n");
-			out.append(reportLine.toString());
-		}
-		 */
 
 		out.append("\n--------------------");
 		out.append("\nMessage : ");
