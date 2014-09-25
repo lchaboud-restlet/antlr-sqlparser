@@ -19,6 +19,7 @@ import com.restlet.sqlimport.model.sql.ForeignKey;
 import com.restlet.sqlimport.model.sql.Table;
 import com.restlet.sqlimport.report.Report;
 import com.restlet.sqlimport.report.ReportLineStatus;
+import com.restlet.sqlimport.report.ReportManager;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -27,6 +28,7 @@ import com.restlet.sqlimport.util.Util;
 public class SqlImportTest {
 
 	private Report report = new Report();
+	private ReportManager reportManager = new ReportManager();
 	private SqlImport sqlImport = new SqlImport(report);
 	private Util util = new Util();
 
@@ -247,23 +249,25 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.getDatabase(sqlContent);
 
+		System.out.println(reportManager.toString(report));
+
 		// Then
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+		assertEquals(5, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(5, database.getTables().size());
 
 		final Table Company = database.getTables().get(0);
-		assertEquals("Company", Company.getName());
+		assertEquals("company", Company.getName());
 		final Table Contact = database.getTables().get(1);
-		assertEquals("Contact", Contact.getName());
-		final Table table3 = database.getTables().get(2);
-		assertEquals("table3", table3.getName());
+		assertEquals("contact", Contact.getName());
+		final Table table1 = database.getTables().get(2);
+		assertEquals("table1", table1.getName());
 		final Table table2 = database.getTables().get(3);
 		assertEquals("table2", table2.getName());
-		final Table table1 = database.getTables().get(4);
-		assertEquals("table1", table1.getName());
+		final Table table3 = database.getTables().get(4);
+		assertEquals("table3", table3.getName());
 
 		// Table Company
 		System.out.println(Contact.getColumnByNames().keySet());
@@ -282,17 +286,17 @@ public class SqlImportTest {
 		assertEquals("firstname", t1_firstname.getName());
 		assertEquals("company_id", t1_company_id.getName());
 		// type
-		assertEquals("VARCHAR", t1_id.getType());
-		assertEquals("VARCHAR", t1_email.getType());
-		assertEquals("INT", t1_age.getType());
-		assertEquals("VARCHAR", t1_name.getType());
-		assertEquals("VARCHAR", t1_firstname.getType());
-		assertEquals("INT", t1_company_id.getType());
+		assertEquals("varchar", t1_id.getType());
+		assertEquals("varchar", t1_email.getType());
+		assertEquals("int", t1_age.getType());
+		assertEquals("varchar", t1_name.getType());
+		assertEquals("varchar", t1_firstname.getType());
+		assertEquals("int", t1_company_id.getType());
 		// primary key
 		assertEquals(1, Contact.getPrimaryKey().getColumnNames().size());
 		assertEquals("id", Contact.getPrimaryKey().getColumnNames().get(0));
 		// not null
-		assertFalse(t1_id.getIsNotNull());
+		assertTrue(t1_id.getIsNotNull());
 		assertTrue(t1_email.getIsNotNull());
 		assertFalse(t1_age.getIsNotNull());
 		assertFalse(t1_name.getIsNotNull());
@@ -301,8 +305,8 @@ public class SqlImportTest {
 		// clé étrangère
 		assertEquals(1, Contact.getForeignKeys().size());
 		final ForeignKey cle_company_id = Contact.getForeignKeys().get(0);
-		assertEquals("Contact", cle_company_id.getTableNameOrigin());
-		assertEquals("Company", cle_company_id.getTableNameTarget());
+		assertEquals("contact", cle_company_id.getTableNameOrigin());
+		assertEquals("company", cle_company_id.getTableNameTarget());
 		assertEquals("company_id", cle_company_id.getColumnNameOrigins().get(0));
 		assertEquals("id", cle_company_id.getColumnNameTargets().get(0));
 
