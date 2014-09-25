@@ -6,10 +6,10 @@ package com.restlet.sqlimport.report;
 public enum ReportLineStatus {
 
 	/** Successful import */
-	SUCCESS,
+	PARSED,
 
 	/** SQL query filtered : not a CREATE TABLE or a ALTER TABLE */
-	FILTERED,
+	IGNORED,
 
 	/** SQL query not filtered - it is a temporary status : the query will be parsed by the parser */
 	TO_PARSE,

@@ -104,6 +104,9 @@ public class SqlImport {
 
 		final Database database = new Database();
 
+		// Add database to the report
+		report.setDatabase(database);
+
 		for(final String query : querys) {
 			readOneQuery(database, query);
 		}
@@ -146,12 +149,18 @@ public class SqlImport {
 			throw new RuntimeException("No parse listener for the query : "+query);
 		}
 
-		p.parse();
-
-		if(!listener.hasError) {
+		try {
+			p.parse();
+			if(!listener.hasError) {
+				final ReportLine reportLine = getReport().getReportLineForQuery(query);
+				reportLine.setReportLineStatus(ReportLineStatus.PARSED);
+			}
+		} catch(final Exception e) {
 			final ReportLine reportLine = getReport().getReportLineForQuery(query);
-			reportLine.setReportLineStatus(ReportLineStatus.SUCCESS);
+			reportLine.setReportLineStatus(ReportLineStatus.PARSING_ERROR);
+			reportLine.setMessage(e.getMessage());
 		}
+
 	}
 
 	/**

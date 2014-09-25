@@ -67,7 +67,7 @@ public class MainProcessTest {
 
 		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		assertNotNull(out);
 	}
@@ -86,7 +86,7 @@ public class MainProcessTest {
 
 		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		assertNotNull(out);
 	}
@@ -105,7 +105,7 @@ public class MainProcessTest {
 
 		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		assertNotNull(out);
 	}
@@ -124,7 +124,7 @@ public class MainProcessTest {
 
 		assertEquals(ReportStatus.SUCCESS, report.getReportStatus());
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		assertNotNull(out);
 	}

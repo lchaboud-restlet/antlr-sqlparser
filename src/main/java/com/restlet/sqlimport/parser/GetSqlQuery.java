@@ -69,7 +69,7 @@ public class GetSqlQuery {
 			final ReportLine reportLine = new ReportLine();
 			reportLine.setQuery(query);
 			if(isFiltered) {
-				reportLine.setReportLineStatus(ReportLineStatus.FILTERED);
+				reportLine.setReportLineStatus(ReportLineStatus.IGNORED);
 			} else {
 				reportLine.setReportLineStatus(ReportLineStatus.TO_PARSE);
 			}

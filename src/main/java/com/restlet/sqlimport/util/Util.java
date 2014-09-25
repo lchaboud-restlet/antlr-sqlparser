@@ -155,7 +155,9 @@ public class Util {
 		bw = new BufferedWriter(new OutputStreamWriter(os));
 
 		try {
-			bw.write(content);
+			if(content != null) {
+				bw.write(content);
+			}
 			bw.close();
 		} catch (final IOException e) {
 			System.err.println(e.getMessage());

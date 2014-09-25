@@ -49,8 +49,13 @@ public class SqlImportTest {
 		// When
 		final Database database = sqlImport.getDatabase(sqlContent);
 
+		// Then
+
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(4, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+
+		// the report contains database schema
+		assertTrue(database == report.getDatabase());
 
 		// Database schema
 		assertEquals(3, database.getTables().size());
@@ -164,7 +169,7 @@ public class SqlImportTest {
 
 		// Then
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(6, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(5, database.getTables().size());
@@ -245,7 +250,7 @@ public class SqlImportTest {
 		assertEquals(9, database.getTables().size());
 
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(9, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(9, database.getTables().size());
@@ -427,7 +432,7 @@ public class SqlImportTest {
 		assertEquals(4, database.getTables().size());
 
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(10, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(4, database.getTables().size());
@@ -526,7 +531,7 @@ public class SqlImportTest {
 		assertEquals(3, database.getTables().size());
 
 		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
-		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.SUCCESS).size());
+		assertEquals(3, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
 
 		// Database schema
 		assertEquals(3, database.getTables().size());
