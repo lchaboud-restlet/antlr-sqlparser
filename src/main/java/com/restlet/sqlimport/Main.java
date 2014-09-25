@@ -45,6 +45,8 @@ public class Main {
 
 			final ReportManager reportManager = new ReportManager();
 			System.out.println(reportManager.toString(report));
+			System.out.println("\n\n==========================\n\n");
+			System.out.println(reportManager.toStringSchema(report));
 
 			System.exit(0);
 		}

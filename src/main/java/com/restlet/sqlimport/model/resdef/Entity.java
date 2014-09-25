@@ -12,6 +12,15 @@ public class Entity {
 	private String pkPolicy;
 	private List<Field> fields = new ArrayList<Field>();
 
+	public Field getFieldForName(final String name) {
+		for(final Field field : fields) {
+			if(field.getName().equalsIgnoreCase(name)) {
+				return field;
+			}
+		}
+		return null;
+	}
+
 	public String getName() {
 		return name;
 	}

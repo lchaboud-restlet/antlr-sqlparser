@@ -13,6 +13,15 @@ public class Resdef {
 
 	private List<Entity> entities = new ArrayList<Entity>();
 
+	public Entity getEntityForName(final String name) {
+		for(final Entity entity : entities) {
+			if(entity.getName().equalsIgnoreCase(name)) {
+				return entity;
+			}
+		}
+		return null;
+	}
+
 	public List<Entity> getEntities() {
 		return entities;
 	}

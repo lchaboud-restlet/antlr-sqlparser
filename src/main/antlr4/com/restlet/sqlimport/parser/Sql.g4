@@ -310,7 +310,7 @@ column_constraint_null
  ;
 
 column_default
- : K_DEFAULT (column_default_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )  ( '::' type_name+ )?
+ : K_DEFAULT (column_default_value | '(' expr ')' | K_NEXTVAL '(' expr ')' | any_name )  ( '::' any_name+ )?
  ;
 
 column_default_value

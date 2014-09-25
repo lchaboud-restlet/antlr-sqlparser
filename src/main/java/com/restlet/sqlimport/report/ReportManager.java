@@ -2,7 +2,11 @@ package com.restlet.sqlimport.report;
 
 import java.text.SimpleDateFormat;
 
+import com.restlet.sqlimport.model.resdef.Entity;
+import com.restlet.sqlimport.model.resdef.Field;
+import com.restlet.sqlimport.model.sql.Column;
 import com.restlet.sqlimport.model.sql.Database;
+import com.restlet.sqlimport.model.sql.ForeignKey;
 import com.restlet.sqlimport.model.sql.Table;
 
 /**
@@ -226,16 +230,58 @@ public class ReportManager {
 		out.append("\n - Date : ").append(sdf.format(report.getDate()));
 		out.append("\n - Type : SQL schema import");
 		out.append("\n");
-		/*
-		out.append("\n");
-		for(final Table table : database.getTables()) {
-			out.append("\n- entity : ").append(table.getName());
-			out.append("\n  - fields : [").append(table.getName());
-			for(final Column column : table.getColumnByNames()) {
-				out.append("\n    - {name:").append(.getName());
+
+		return out.toString();
+	}
+
+	public String toStringSchema(final Report report) {
+		final StringBuffer out = new StringBuffer();
+
+		for(final Table table : report.getDatabase().getTables()) {
+			final Entity entity = report.getResdef().getEntityForName(table.getName());
+			out.append("\n* Table : ").append(table.getName()).append(" -> Entity : ").append(entity.getName());
+			if(entity != null) {
+				for(final Column column : table.getColumnByNames().values()) {
+					final Field field = entity.getFieldForName(column.getName());
+					out.append("\n  - Column : ").append(column.getName()).append(" -> Field : ").append(field.getName());
+					out.append("\n    - Type : ").append(column.getType()).append(" -> Type : ").append(field.getType());
+					out.append("\n    - NotNull : ").append((column.getIsNotNull()==null)?"<<empty>>":column.getIsNotNull()).append(" -> Nullable : ").append(field.getNullable());
+				}
+				// primary key
+				out.append("\n   - Primary key : [");
+				boolean isFirst = true;
+				for(final String columnName : table.getPrimaryKey().getColumnNames()) {
+					if(isFirst) {isFirst = false;} else {out.append(", ");}
+					out.append(columnName);
+				}
+				out.append("] -> Entity primary key : [");
+				isFirst = true;
+				for(final Field field : entity.getFields()) {
+					if((field.getIsPrimaryKey() != null) && field.getIsPrimaryKey()) {
+						if(isFirst) {isFirst = false;} else {out.append(", ");}
+						out.append(field.getName());
+					}
+				}
+				out.append("]");
+				// foreign key
+				out.append("\n   - Foreign keys : ");
+				for(final ForeignKey foreignKey : table.getForeignKeys()) {
+					out.append("\n     - table source : ");
+					out.append(foreignKey.getTableNameOrigin());
+					for(final String columnName : foreignKey.getColumnNameOrigins()) {
+						out.append("\n       - column : ");
+						out.append(columnName);
+					}
+					out.append("\n     - table target : ");
+					out.append(foreignKey.getTableNameTarget());
+					for(final String columnName : foreignKey.getColumnNameTargets()) {
+						out.append("\n       - column : ");
+						out.append(columnName);
+					}
+				}
 			}
 		}
-		 */
+
 		return out.toString();
 	}
 
