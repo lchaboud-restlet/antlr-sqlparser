@@ -43,7 +43,7 @@ public class GetSqlQueryTest {
 	@Test
 	public void testRead_mysql() throws FileNotFoundException {
 		// Given
-		final File file = util.getFileByClassPath("/mysql.sql");
+		final File file = util.getFileByClassPath("/mysql1.sql");
 		final InputStream in = new FileInputStream(file);
 		final String sqlContent = util.read(in);
 

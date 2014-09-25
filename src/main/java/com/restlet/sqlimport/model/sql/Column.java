@@ -20,7 +20,7 @@ public class Column {
 	/**
 	 * Indicates if the column must be not null
 	 */
-	private Boolean isNotNull;
+	private Boolean isNotNull = false;
 	/**
 	 * Converted type.
 	 */

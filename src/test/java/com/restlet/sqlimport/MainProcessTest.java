@@ -56,7 +56,7 @@ public class MainProcessTest {
 	@Test
 	public void testGetDatabase_mysql() throws FileNotFoundException {
 		// Given
-		final File file = util.getFileByClassPath("/mysql.sql");
+		final File file = util.getFileByClassPath("/mysql1.sql");
 		final InputStream in = new FileInputStream(file);
 		final String sqlContent = util.read(in);
 

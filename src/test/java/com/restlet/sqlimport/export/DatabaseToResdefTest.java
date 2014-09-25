@@ -90,7 +90,7 @@ public class DatabaseToResdefTest {
 		assertEquals("column 1", field1.getName());
 		assertNull(field1.getType());
 		assertNull(field1.getIsPrimaryKey());
-		assertNull(field1.getNullable());
+		assertTrue(field1.getNullable());
 		assertNull(field1.getDefaultValue());
 		assertNull(field1.getMinOccurs());
 		assertNull(field1.getMaxOccurs());
@@ -121,7 +121,7 @@ public class DatabaseToResdefTest {
 		assertEquals("column 1", field1.getName());
 		assertNull(field1.getType());
 		assertEquals(true, field1.getIsPrimaryKey());
-		assertNull(field1.getNullable());
+		assertTrue(field1.getNullable());
 		assertNull(field1.getDefaultValue());
 		assertNull(field1.getMinOccurs());
 		assertNull(field1.getMaxOccurs());
@@ -161,7 +161,7 @@ public class DatabaseToResdefTest {
 		assertEquals("column 1", field1.getName());
 		assertNull(field1.getType());
 		assertNull(field1.getIsPrimaryKey());
-		assertNull(field1.getNullable());
+		assertTrue(field1.getNullable());
 		assertNull(field1.getDefaultValue());
 		assertNull(field1.getMinOccurs());
 		assertNull(field1.getMaxOccurs());
@@ -206,7 +206,7 @@ public class DatabaseToResdefTest {
 		assertEquals("column 1", field1.getName());
 		assertEquals("tableNameTarget",field1.getType());
 		assertNull(field1.getIsPrimaryKey());
-		assertNull(field1.getNullable());
+		assertTrue(field1.getNullable());
 		assertNull(field1.getDefaultValue());
 		assertEquals(Integer.valueOf(0),field1.getMinOccurs());
 		assertEquals("*",field1.getMaxOccurs());
