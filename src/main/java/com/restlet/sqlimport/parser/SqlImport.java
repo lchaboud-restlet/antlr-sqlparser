@@ -19,7 +19,7 @@ public class SqlImport {
 	/**
 	 * Log activated.
 	 */
-	public static final boolean LOG_ACTIVATED = false;
+	public static final boolean LOG_ACTIVATED = true;
 
 	/**
 	 * Report.
