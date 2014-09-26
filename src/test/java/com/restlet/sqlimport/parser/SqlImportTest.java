@@ -11,6 +11,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Test;
 
 import com.restlet.sqlimport.model.sql.Column;
@@ -237,6 +239,35 @@ public class SqlImportTest {
 		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
 		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
 		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
+	}
+
+	@Test
+	public void testQuery_mysql2_with_fk() {
+		final String query =
+				"CREATE TABLE `contact` ("
+						+"		  `id` varchar(255) NOT NULL DEFAULT '',"
+						+"		  `email` varchar(255) NOT NULL,"
+						+"		  `age` int(11) DEFAULT NULL,"
+						+"		  `name` varchar(255) DEFAULT NULL,"
+						+"		  `firstname` varchar(255) DEFAULT NULL,"
+						+"		  `company_id` int(11) DEFAULT NULL,"
+						+"		  PRIMARY KEY (`id`),"
+						+"		  UNIQUE KEY `email` (`email`),"
+						+"		  KEY `company_id` (`company_id`),"
+						+"		  CONSTRAINT `contact_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)"
+						+"		) ENGINE=InnoDB DEFAULT CHARSET=latin1";
+
+		final Database database = new Database();
+
+		final ANTLRInputStream in = new ANTLRInputStream(query);
+		final SqlLexer l = new SqlLexer(in);
+		final SqlParser p = new SqlParser(new CommonTokenStream(l));
+		p.addParseListener(new CreateTableParseListener(p, database));
+		p.parse();
+
+		final Table table = database.getTables().get(0);
+		assertEquals("contact",table.getName());
+		assertEquals(1,table.getForeignKeys().size());
 	}
 
 	@Test

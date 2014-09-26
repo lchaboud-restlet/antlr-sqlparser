@@ -403,8 +403,9 @@ table_constraint
  : ( K_CONSTRAINT name )?
    ( table_constraint_primary_key
    | table_constraint_unique
-   | K_CHECK '(' expr ')'
    | table_constraint_foreign_key
+   | table_constraint_key
+   | K_CHECK '(' expr ')'
    )
  ;
 
@@ -417,7 +418,11 @@ table_constraint_foreign_key
  ;
 
 table_constraint_unique
- : K_UNIQUE '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
+ : K_UNIQUE K_KEY? name '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
+ ;
+
+table_constraint_key
+ : K_KEY name '(' indexed_column ( ',' indexed_column )* ')' conflict_clause
  ;
 
 fk_origin_column_name

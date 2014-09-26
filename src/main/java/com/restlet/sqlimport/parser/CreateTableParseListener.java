@@ -21,6 +21,7 @@ import com.restlet.sqlimport.parser.SqlParser.Table_constraint_foreign_keyContex
 import com.restlet.sqlimport.parser.SqlParser.Table_constraint_primary_keyContext;
 import com.restlet.sqlimport.parser.SqlParser.Table_nameContext;
 import com.restlet.sqlimport.parser.SqlParser.Type_nameContext;
+import com.restlet.sqlimport.parser.SqlParser.UnknownContext;
 import com.restlet.sqlimport.util.Util;
 
 /**
@@ -31,7 +32,7 @@ public class CreateTableParseListener extends SqlBaseListener {
 	/**
 	 * Debug mode to display ANTLR v4 contexts.
 	 */
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
 	/**
 	 * ANTLR Parser
@@ -74,6 +75,13 @@ public class CreateTableParseListener extends SqlBaseListener {
 	 */
 	@Override
 	public void exitAny_name(final Any_nameContext ctx) {
+		if(DEBUG) {
+			System.out.println(ctx.getText() + " - ctx : " + ctx.toInfoString(sqlParser));
+		}
+	}
+
+	@Override
+	public void exitUnknown(final UnknownContext ctx) {
 		if(DEBUG) {
 			System.out.println(ctx.getText() + " - ctx : " + ctx.toInfoString(sqlParser));
 		}
