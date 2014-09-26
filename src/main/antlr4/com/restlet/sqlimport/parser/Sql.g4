@@ -272,8 +272,7 @@ vacuum_stmt
  ;
 
 column_def
- : ( K_UNIQUE? K_KEY unknown 
-   | column_name ( column_constraint | type_name )* )
+ : ( column_name ( column_constraint | type_name )* )
  ;
 
 type_name
