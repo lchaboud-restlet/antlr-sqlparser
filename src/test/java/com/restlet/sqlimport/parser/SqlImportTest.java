@@ -271,9 +271,91 @@ public class SqlImportTest {
 	}
 
 	@Test
-	public void testGetDatabase_mysql2() throws FileNotFoundException {
+	public void testGetDatabase_mysql_mysqlworkbench() throws FileNotFoundException {
 		// Given
-		final File file = util.getFileByClassPath("/mysql2.sql");
+		final File file = util.getFileByClassPath("/mysql_mysqlworkbench.sql");
+		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
+
+		// When
+		final Database database = sqlImport.getDatabase(sqlContent);
+
+		System.out.println(reportManager.toString(report));
+
+		// Then
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(5, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+
+		// Database schema
+		assertEquals(5, database.getTables().size());
+
+		final Table Company = database.getTables().get(0);
+		assertEquals("company", Company.getName());
+		final Table Contact = database.getTables().get(1);
+		assertEquals("contact", Contact.getName());
+		final Table table1 = database.getTables().get(2);
+		assertEquals("table1", table1.getName());
+		final Table table2 = database.getTables().get(3);
+		assertEquals("table2", table2.getName());
+		final Table table3 = database.getTables().get(4);
+		assertEquals("table3", table3.getName());
+
+		// Table Company
+		System.out.println(Contact.getColumnByNames().keySet());
+		assertEquals(6, Contact.getColumnByNames().keySet().size());
+		final Column t1_id = Contact.getColumnByNames().get("id");
+		final Column t1_email = Contact.getColumnByNames().get("email");
+		final Column t1_age = Contact.getColumnByNames().get("age");
+		final Column t1_name = Contact.getColumnByNames().get("name");
+		final Column t1_firstname = Contact.getColumnByNames().get("firstname");
+		final Column t1_company_id = Contact.getColumnByNames().get("company_id");
+		// name
+		assertEquals("id", t1_id.getName());
+		assertEquals("email", t1_email.getName());
+		assertEquals("age", t1_age.getName());
+		assertEquals("name", t1_name.getName());
+		assertEquals("firstname", t1_firstname.getName());
+		assertEquals("company_id", t1_company_id.getName());
+		// type
+		assertEquals("varchar", t1_id.getType());
+		assertEquals("varchar", t1_email.getType());
+		assertEquals("int", t1_age.getType());
+		assertEquals("varchar", t1_name.getType());
+		assertEquals("varchar", t1_firstname.getType());
+		assertEquals("int", t1_company_id.getType());
+		// primary key
+		assertEquals(1, Contact.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", Contact.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertTrue(t1_id.getIsNotNull());
+		assertTrue(t1_email.getIsNotNull());
+		assertFalse(t1_age.getIsNotNull());
+		assertFalse(t1_name.getIsNotNull());
+		assertFalse(t1_firstname.getIsNotNull());
+		assertFalse(t1_company_id.getIsNotNull());
+		// clé étrangère
+		assertEquals(1, Contact.getForeignKeys().size());
+		final ForeignKey cle_company_id = Contact.getForeignKeys().get(0);
+		assertEquals("contact", cle_company_id.getTableNameOrigin());
+		assertEquals("company", cle_company_id.getTableNameTarget());
+		assertEquals("company_id", cle_company_id.getColumnNameOrigins().get(0));
+		assertEquals("id", cle_company_id.getColumnNameTargets().get(0));
+
+		// table2
+		// clé étrangère
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("table2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("table3", fk_table2_table3.getTableNameTarget());
+		assertEquals("id_table3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
+	}
+
+	@Test
+	public void testGetDatabase_mysql_mysqldump() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/mysql_mysqldump.sql");
 		final InputStream in = new FileInputStream(file);
 		final String sqlContent = util.read(in);
 
@@ -616,6 +698,87 @@ public class SqlImportTest {
 	}
 
 	@Test
+	public void testGetDatabase_postgres_pg_dump() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/postgres_pg_dump.sql");
+		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
+
+		// When
+		final Database database = sqlImport.getDatabase(sqlContent);
+
+		assertEquals(5, database.getTables().size());
+
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(14, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+
+		// Database schema
+		assertEquals(5, database.getTables().size());
+
+		final Table Company = database.getTables().get(0);
+		assertEquals("company", Company.getName());
+		final Table Contact = database.getTables().get(1);
+		assertEquals("contact", Contact.getName());
+		final Table table1 = database.getTables().get(2);
+		assertEquals("table1", table1.getName());
+		final Table table2 = database.getTables().get(3);
+		assertEquals("table2", table2.getName());
+		final Table table3 = database.getTables().get(4);
+		assertEquals("table3", table3.getName());
+
+		// Table Company
+		System.out.println(Contact.getColumnByNames().keySet());
+		assertEquals(6, Contact.getColumnByNames().keySet().size());
+		final Column t1_id = Contact.getColumnByNames().get("id");
+		final Column t1_email = Contact.getColumnByNames().get("email");
+		final Column t1_age = Contact.getColumnByNames().get("age");
+		final Column t1_name = Contact.getColumnByNames().get("name");
+		final Column t1_firstname = Contact.getColumnByNames().get("firstname");
+		final Column t1_company_id = Contact.getColumnByNames().get("company_id");
+		// name
+		assertEquals("id", t1_id.getName());
+		assertEquals("email", t1_email.getName());
+		assertEquals("age", t1_age.getName());
+		assertEquals("name", t1_name.getName());
+		assertEquals("firstname", t1_firstname.getName());
+		assertEquals("company_id", t1_company_id.getName());
+		// type
+		assertEquals("character varying", t1_id.getType());
+		assertEquals("character varying", t1_email.getType());
+		assertEquals("integer", t1_age.getType());
+		assertEquals("character varying", t1_name.getType());
+		assertEquals("character varying", t1_firstname.getType());
+		assertEquals("integer", t1_company_id.getType());
+		// primary key
+		assertEquals(1, Contact.getPrimaryKey().getColumnNames().size());
+		assertEquals("id", Contact.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		assertTrue(t1_id.getIsNotNull());
+		assertTrue(t1_email.getIsNotNull());
+		assertFalse(t1_age.getIsNotNull());
+		assertFalse(t1_name.getIsNotNull());
+		assertFalse(t1_firstname.getIsNotNull());
+		assertFalse(t1_company_id.getIsNotNull());
+		// clé étrangère
+		assertEquals(1, Contact.getForeignKeys().size());
+		final ForeignKey cle_company_id = Contact.getForeignKeys().get(0);
+		assertEquals("contact", cle_company_id.getTableNameOrigin());
+		assertEquals("company", cle_company_id.getTableNameTarget());
+		assertEquals("company_id", cle_company_id.getColumnNameOrigins().get(0));
+		assertEquals("id", cle_company_id.getColumnNameTargets().get(0));
+
+		// table2
+		// clé étrangère
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("table2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("table3", fk_table2_table3.getTableNameTarget());
+		assertEquals("id_table3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("id", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("nom_table3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("nom", fk_table2_table3.getColumnNameTargets().get(1));
+	}
+
+	@Test
 	public void testGetDatabase_oracle1() throws FileNotFoundException {
 		// Given
 		final File file = util.getFileByClassPath("/oracle1.sql");
@@ -853,6 +1016,90 @@ public class SqlImportTest {
 		assertTrue(t1_name.getIsNotNull());
 		// clé étrangère
 		assertEquals(0, distributors.getForeignKeys().size());
+	}
+
+	@Test
+	public void testGetDatabase_oracle_sqldeveloper() throws FileNotFoundException {
+		// Given
+		final File file = util.getFileByClassPath("/oracle_sqldeveloper.sql");
+		final InputStream in = new FileInputStream(file);
+		final String sqlContent = util.read(in);
+
+		// When
+		final Database database = sqlImport.getDatabase(sqlContent);
+
+		System.out.println(reportManager.toString(report));
+
+		// Then
+		assertEquals(0, report.getReportLinesForStatus(ReportLineStatus.PARSING_ERROR).size());
+		assertEquals(14, report.getReportLinesForStatus(ReportLineStatus.PARSED).size());
+
+		// Database schema
+		assertEquals(5, database.getTables().size());
+
+		final Table table1 = database.getTables().get(0);
+		assertEquals("TABLE1", table1.getName());
+		final Table table2 = database.getTables().get(1);
+		assertEquals("TABLE2", table2.getName());
+		final Table table3 = database.getTables().get(2);
+		assertEquals("TABLE3", table3.getName());
+		final Table Company = database.getTables().get(3);
+		assertEquals("COMPANY", Company.getName());
+		final Table Contact = database.getTables().get(4);
+		assertEquals("CONTACT", Contact.getName());
+
+		// Table Company
+		System.out.println(Contact.getColumnByNames().keySet());
+		assertEquals(6, Contact.getColumnByNames().keySet().size());
+		final Column t1_id = Contact.getColumnByNames().get("ID");
+		final Column t1_email = Contact.getColumnByNames().get("EMAIL");
+		final Column t1_age = Contact.getColumnByNames().get("AGE");
+		final Column t1_name = Contact.getColumnByNames().get("NAME");
+		final Column t1_firstname = Contact.getColumnByNames().get("FIRSTNAME");
+		final Column t1_company_id = Contact.getColumnByNames().get("COMPANY_ID");
+		// name
+		assertEquals("ID", t1_id.getName());
+		assertEquals("EMAIL", t1_email.getName());
+		assertEquals("AGE", t1_age.getName());
+		assertEquals("NAME", t1_name.getName());
+		assertEquals("FIRSTNAME", t1_firstname.getName());
+		assertEquals("COMPANY_ID", t1_company_id.getName());
+		// type
+		assertEquals("VARCHAR2", t1_id.getType());
+		assertEquals("VARCHAR2", t1_email.getType());
+		assertEquals("NUMBER", t1_age.getType());
+		assertEquals("VARCHAR2", t1_name.getType());
+		assertEquals("VARCHAR2", t1_firstname.getType());
+		assertEquals("NUMBER", t1_company_id.getType());
+		// primary key
+		assertEquals(1, Contact.getPrimaryKey().getColumnNames().size());
+		assertEquals("ID", Contact.getPrimaryKey().getColumnNames().get(0));
+		// not null
+		/*
+		assertTrue(t1_id.getIsNotNull());
+		assertTrue(t1_email.getIsNotNull());
+		assertFalse(t1_age.getIsNotNull());
+		assertFalse(t1_name.getIsNotNull());
+		assertFalse(t1_firstname.getIsNotNull());
+		assertFalse(t1_company_id.getIsNotNull());
+		 */
+		// clé étrangère
+		assertEquals(1, Contact.getForeignKeys().size());
+		final ForeignKey cle_company_id = Contact.getForeignKeys().get(0);
+		assertEquals("CONTACT", cle_company_id.getTableNameOrigin());
+		assertEquals("COMPANY", cle_company_id.getTableNameTarget());
+		assertEquals("COMPANY_ID", cle_company_id.getColumnNameOrigins().get(0));
+		assertEquals("ID", cle_company_id.getColumnNameTargets().get(0));
+
+		// table2
+		// clé étrangère
+		final ForeignKey fk_table2_table3 = table2.getForeignKeys().get(0);
+		assertEquals("TABLE2", fk_table2_table3.getTableNameOrigin());
+		assertEquals("TABLE3", fk_table2_table3.getTableNameTarget());
+		assertEquals("ID_TABLE3", fk_table2_table3.getColumnNameOrigins().get(0));
+		assertEquals("ID", fk_table2_table3.getColumnNameTargets().get(0));
+		assertEquals("NOM_TABLE3", fk_table2_table3.getColumnNameOrigins().get(1));
+		assertEquals("NOM", fk_table2_table3.getColumnNameTargets().get(1));
 	}
 
 }

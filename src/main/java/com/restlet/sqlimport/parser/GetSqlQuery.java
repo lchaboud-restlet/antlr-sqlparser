@@ -42,6 +42,12 @@ public class GetSqlQuery {
 					return false;
 				}
 			}
+			if(queryUpperCase.indexOf("ADD PRIMARY KEY") != -1) {
+				return false;
+			}
+			if(queryUpperCase.indexOf("ADD FOREIGN KEY") != -1) {
+				return false;
+			}
 		}
 
 		return true;

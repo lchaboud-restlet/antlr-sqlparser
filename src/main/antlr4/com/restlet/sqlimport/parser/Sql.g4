@@ -81,14 +81,19 @@ sql_stmt
 alter_table_stmt
  : K_ALTER K_TABLE K_ONLY? ( database_name '.' )? source_table_name
    ( K_RENAME K_TO new_table_name
+   | alter_table_add
    | alter_table_add_constraint
    | K_ADD K_COLUMN? column_def
    )
-   K_ENABLE?
+   K_ENABLE? (unknown)?
  ;
 
 alter_table_add_constraint
  : K_ADD K_CONSTRAINT any_name table_constraint
+ ;
+
+alter_table_add
+ : K_ADD table_constraint
  ;
 
 analyze_stmt
@@ -501,7 +506,7 @@ cte_table_name
  ;
 
 signed_number
- : ( '+' | '-' )? NUMERIC_LITERAL
+ : ( ( '+' | '-' )? NUMERIC_LITERAL | '*' )
  ;
 
 literal_value
